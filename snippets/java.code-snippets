@@ -1,0 +1,97 @@
+{
+    "Initialise collector": {
+        "scope": "java",
+        "prefix": "initCol",
+        "body": [
+            "BatchEmitter emitter = BatchEmitter.builder()",
+            "        .url(\"${1:http://collector.com}\")",
+            "        .build();",
+            "Tracker tracker = new Tracker",
+            "        .TrackerBuilder(emitter, \"${2:namespace}\", \"${3:appId}\")",
+            "        .build();"
+        ]
+    },
+    "Set subject": {
+        "scope": "java",
+        "prefix": "setSubject",
+        "body": [
+            "Subject subject = new Subject.SubjectBuilder()",
+            "        .userId(\"${1:java@snowplowanalytics.com}\")",
+            "        .build();"
+        ]
+    },
+    "Send structured event": {
+        "scope": "java",
+        "prefix": "sendEvent",
+        "body": [
+            "Structured structured = Structured.builder()",
+            "                .category(\"${1:category}\")",
+            "                .action(\"${2:action}\")",
+            "                .label(\"${3:label}\")",
+            "                .property(\"${4:property}\")",
+            "                .value(${5:12.34})",
+            "                .build();"
+        ]
+    },
+    "Send self-describing JSON": {
+        "scope": "java",
+        "prefix": "sendJSON",
+        "body": [
+            "// This map will be used for the \"data\" key",
+            "Map<String, String> eventData = new HashMap<>();",
+            "eventData.put(\"targetUrl\", \"${1:https://www.snowplowanalytics.com}\")",
+            "",
+            "// Wrap the map in a SelfDescribingJson",
+            "// The specified schema allows for a String property \"targetUrl\"",
+            "SelfDescribingJson sdj = new SelfDescribingJson(\"${2:iglu:com.snowplowanalytics.snowplow/link_click/jsonschema/1-0-1}\", eventData);"
+        ]
+    },
+    "Timing": {
+        "scope": "java",
+        "prefix": "timing",
+        "body": [
+            "Timing timing = Timing.builder()",
+            "            .category(\"${1:category}\")",
+            "            .variable(\"${2:variable}\")",
+            "            .timing(${3:10}) // in milliseconds",
+            "            .label(\"${4:optional label}\")",
+            "            .build();"
+        ]
+    },
+    "Screen view": {
+        "scope": "java",
+        "prefix": "screenView",
+        "body": [
+            "ScreenView screenView = ScreenView.builder()",
+            "            .name(\"${1:screen_name}\")",
+            "            .id(\"${2:screen_id}\")",
+            "            .build();"
+        ]
+    },
+    "Ecommerce": {
+        "scope": "java",
+        "prefix": "ecommerce",
+        "body": [
+            ".price(${1:1.0}) TODO: check this",
+            "        .quantity(${2:2})",
+            "        .name(\"${3:item name}\")",
+            "        .category(\"${4:category}\")",
+            "        .currency(\"${5:currency}\")",
+            "        .build();",
+            "",
+            "// Then make the EcommerceTransaction event",
+            "EcommerceTransaction ecommerceTransaction = EcommerceTransaction.builder()",
+            "        .items(item) // Add the EcommerceTransactionItem events",
+            "        .orderId(\"${6:should be the same as item_id}\")",
+            "        .totalValue(${7:2.0})",
+            "        .affiliation(\"${8:affiliation}\")",
+            "        .taxValue(${9:2.0})",
+            "        .shipping(${10:3.0})",
+            "        .city(\"${11:city}\")",
+            "        .state(\"${12:state}\")",
+            "        .country(\"${13:country}\")",
+            "        .currency(\"${14:currency}\")",
+            "        .build();"
+        ]
+    }
+}

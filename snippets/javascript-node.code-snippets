@@ -1,0 +1,39 @@
+{
+    "Send structured event": {
+        "scope": "javascript,typescript",
+        "prefix": "sendEvent",
+        "body": [
+            "t.track(buildStructEvent({",
+            "  category: \"${1:category}\", ",
+            "  action: \"${2:action}\", ",
+            "  label: \"${3:label}\", ",
+            "  property: \"${4:property}\", ",
+            "  value: ${5:1}",
+            "}));"
+        ]
+    },
+    "Send self-describing JSON": {
+        "scope": "javascript,typescript",
+        "prefix": "sendJSON",
+        "body": [
+            "t.track(buildSelfDescribingEvent({",
+            "  event: {",
+            "    schema: \"${1:iglu:com.example/example/jsonschema/1-0-0}\",",
+            "    data: {",
+            "      save_id: \"${2:4321}\",",
+            "    }",
+            "  }",
+            "}));"
+        ]
+    },
+    "Screen view": {
+        "scope": "javascript,typescript",
+        "prefix": "screenView",
+        "body": [
+            "t.track(buildScreenView({",
+            "  name: \"${1:screen_name}\", ",
+            "  id: \"${2:screen_id}\"",
+            "}));"
+        ]
+    }
+}

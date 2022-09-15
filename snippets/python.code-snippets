@@ -1,0 +1,36 @@
+{
+    "Set subject": {
+        "scope": "python",
+        "prefix": "setSubject",
+        "body": [
+            "from snowplow_tracker import Subject",
+            "s = Subject() TODO: better example"
+        ]
+    },
+    "Send structured event": {
+        "scope": "python",
+        "prefix": "sendEvent",
+        "body": [
+            "t.track_struct_event(\"${1:category}\", \"${2:action}\", ${3:label}, \"${4:property}\", ${5:1})"
+        ]
+    },
+    "Send self-describing JSON": {
+        "scope": "python",
+        "prefix": "sendJSON",
+        "body": [
+            "t.track_self_describing_event(SelfDescribingJson(",
+            "  \"${1:iglu:com.example/example/jsonschema/1-0-0}\",",
+            "  {",
+            "    \"value\": \"${2:123}\",",
+            "  }",
+            "))"
+        ]
+    },
+    "Screen view": {
+        "scope": "python",
+        "prefix": "screenView",
+        "body": [
+            "t.track_screen_view(\"${1:screen_name}\", \"${2:screen_id}\")"
+        ]
+    }
+}

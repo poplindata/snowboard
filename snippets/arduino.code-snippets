@@ -1,0 +1,12 @@
+{
+    "Send structured event": {
+        "scope": "cpp",
+        "prefix": "sendEvent",
+        "body": [
+            "int trackStructEvent(const char *aCategory,",
+            "                     const char *aAction,",
+            "                     const char *aLabel = NULL,",
+            "                     const char *aProperty = NULL) const; TODO: this seems wrong"
+        ]
+    }
+}

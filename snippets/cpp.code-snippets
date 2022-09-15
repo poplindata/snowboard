@@ -1,0 +1,63 @@
+{
+    "Initialise collector": {
+        "scope": "cpp",
+        "prefix": "initCol",
+        "body": [
+            "auto tracker = Snowplow::create_tracker(",
+            "    \"${1:namespace}\", // tracker namespace used to identify the tracker",
+            "    \"${2:https://com.collector}\", // Snowplow collector URL",
+            "    POST, // HTTP method used to send events to the collector",
+            "    \"${3:events.db}\" // Relative path to an SQLite database used for event queue and session tracking",
+            ");"
+        ]
+    },
+    "Set subject": {
+        "scope": "cpp",
+        "prefix": "setSubject",
+        "body": [
+            "auto subject = make_shared<Subject>();",
+            "subject.set_user_id(\"${1:userid}\");"
+        ]
+    },
+    "Send structured event": {
+        "scope": "cpp",
+        "prefix": "sendEvent",
+        "body": [
+            "StructuredEvent se(\"${1:category}\", \"${2:action}\"); // constructor takes category and action",
+            "se.property = \"${3:property}\";",
+            "se.value = ${4:123};",
+            "",
+            "Snowplow::get_default_tracker()->track(se);"
+        ]
+    },
+    "Send self-describing JSON": {
+        "scope": "cpp",
+        "prefix": "sendJSON",
+        "body": [
+            "StructuredEvent se(\"${1:category}\", \"${2:action}\"); TODO: this looks incorrect",
+            "se.set_context(context);",
+            "",
+            "Snowplow::get_default_tracker()->track(se);"
+        ]
+    },
+    "Timing": {
+        "scope": "cpp",
+        "prefix": "timing",
+        "body": [
+            "TimingEvent te(\"${1:category}\", \"${2:variable}\", ${3:123});",
+            "Snowplow::get_default_tracker()->track(te);"
+        ]
+    },
+    "Screen view (apps only)": {
+        "scope": "cpp",
+        "prefix": "screenView",
+        "body": [
+            "string name = \"${1:screen_id}\";",
+            "",
+            "ScreenViewEvent sve;",
+            "sve.name = &name;",
+            "",
+            "Snowplow::get_default_tracker()->track(sve);"
+        ]
+    }
+}

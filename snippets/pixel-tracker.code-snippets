@@ -1,0 +1,9 @@
+{
+    "Initialise collector": {
+        "scope": "html",
+        "prefix": "initCol",
+        "body": [
+            "Check out <a href=\"http://collector.com/r/tp2?u=https%3A%2F%2Fgithub.com%2Fsnowplow%2Fhuskimo\">${1:Huskimo}</a>"
+        ]
+    }
+}

@@ -1,0 +1,99 @@
+{
+    "Initialise collector": {
+        "scope": "swift,objectivec",
+        "prefix": "initCol",
+        "body": [
+            "let tracker = Snowplow.createTracker(namespace: \"${1:namespace}\", endpoint: ${2:com.collector}, method: .post)"
+        ]
+    },
+    "Send structured event": {
+        "scope": "swift,objectivec",
+        "prefix": "sendEvent",
+        "body": [
+            "let event = Structured(category: \"${1:category}\", action: \"${2:action}\")",
+            "tracker.track(event) TODO: needs label etc"
+        ]
+    },
+    "Send self-describing JSON": {
+        "scope": "swift,objectivec",
+        "prefix": "sendJSON",
+        "body": [
+            "let data = [\"a\": \"b\" as NSObject];",
+            "let event = SelfDescribing(schema: \"${3:iglu:com.example/example/jsonschema/1-0-0}\", payload: data)",
+            "tracker.track(event)"
+        ]
+    },
+    "Timing": {
+        "scope": "swift,objectivec",
+        "prefix": "timing",
+        "body": [
+            "let event = Timing(category: \"${1:category}\", variable: \"${2:variable}\", timing: ${3:123})",
+            "    .label(\"${4:label}\")       ",
+            "tracker.track(event)"
+        ]
+    },
+    "Screen view": {
+        "scope": "swift,objectivec",
+        "prefix": "screenView",
+        "body": [
+            "let event = ScreenView(name: \"${1:screen_name}\", screenId: UUID())",
+            "tracker.track(event)"
+        ]
+    },
+    "Consent granted": {
+        "scope": "swift,objectivec",
+        "prefix": "consentGranted",
+        "body": [
+            "let event = ConsentGranted(expiry: \"${1:2022-01-01T00:00:00Z}\", documentId: \"${2:document_id}\", version: \"${3:1.1}\")       ",
+            "    .name(\"${4:document_name}\")",
+            "    .documentDescription(\"${5:description}\")",
+            "                ",
+            "tracker.track(event)"
+        ]
+    },
+    "Consent withdrawn": {
+        "scope": "swift,objectivec",
+        "prefix": "consentWithdrawn",
+        "body": [
+            "let event = ConsentWithdrawn()",
+            "    .all(${1:true})",
+            "    .documentId(\"${2:1234abcd}\")",
+            "    .version(\"${3:1.1}\")       ",
+            "    .name(\"${4:document_name}\")",
+            "    .documentDescription(\"${5:description}\")",
+            "                ",
+            "tracker.track(event)"
+        ]
+    },
+    "Ecommerce": {
+        "scope": "swift,objectivec",
+        "prefix": "ecommerce",
+        "body": [
+            "let transactionID = \"${1:6a8078be}\"       TODO: check this",
+            "                ",
+            "let itemArray = [       ",
+            "  EcommerceItem(sku: \"${2:DemoItemSku}\", price: ${3:0.75}, quantity: ${4:1})",
+            "    .name(\"${5:DemoItemName}\")       ",
+            "    .category(\"${6:DemoItemCategory}\")       ",
+            "    .currency(\"${7:USD}\")       ",
+            "]       ",
+            "                ",
+            "let event = Ecommerce(orderId: transactionID, totalValue: ${8:350}, items: itemArray)   ",
+            "    .affiliation(\"${9:DemoTransactionAffiliation}\")",
+            "    .taxValue(${10:10})",
+            "    .shipping(${11:15})",
+            "    .city(\"${12:Boston}\")",
+            "    .state(\"${13:Massachisetts}\")",
+            "    .country(\"${14:USA}\")",
+            "    .currency(\"${15:USD}\")",
+            "tracker.track(event)"
+        ]
+    },
+    "Deep Link": {
+        "scope": "swift,objectivec",
+        "prefix": "deepLink",
+        "body": [
+            "let deepLinkEvent = DeepLinkReceived(url: userActivity.webpageURL.absoluteString)"
+        ]
+    }
+}

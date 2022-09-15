@@ -22,62 +22,64 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.showInformationMessage('Hello World from snowboarding!');
 	});
 
+	let micro = vscode.commands.registerCommand('snowboard.openMicro', () => {
+		// The code you place here will be executed every time your command is executed
+		// Display a message box to the user
+		// vscode.window.showInformationMessage('Hello World from snowboarding!');
+		// vscode.open('https://localhost:9090/micro/all');
+		let microUri = 'http://localhost:9090/micro/all';
+		let success = vscode.commands.executeCommand('vscode.open', microUri, 1);
 
-	const provider1 = vscode.languages.registerCompletionItemProvider('plaintext', {
+		// probably makes more sense to open this as a webview...
+
+	});
+
+	let newSchema = vscode.commands.registerCommand('snowboard.newSchema', () => {
+		let success = vscode.commands.executeCommand('workbench.action.files.newUntitledFile');
+	});
+
+	let openDebugger = vscode.commands.registerCommand('snowboard.openMicroDebugger', () => {
+		const panel = vscode.window.createWebviewPanel(
+			'Micro Debugger',
+			'Micro Debugger',
+			vscode.ViewColumn.Two,
+			{
+				enableScripts: true
+			}
+		);
+		panel.webview.html = '<iframe src="http://localhost:3000" style="border: medium none; width: 100%; height: 1000px;"></iframe>';
+	});
+
+	// command to create new untitled file
+	// workbench.action.files.newUntitledFile
+
+
+	const provider1 = vscode.languages.registerCompletionItemProvider('*', {
 
 		provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {
 
-			// a simple completion item which inserts `Hello World!`
-			const simpleCompletion = new vscode.CompletionItem('Hello World!');
-
-			// a completion item that inserts its text as snippet,
-			// the `insertText`-property is a `SnippetString` which will be
-			// honored by the editor.
-			const snippetCompletion = new vscode.CompletionItem('Good part of the day');
-			snippetCompletion.insertText = new vscode.SnippetString('Good ${1|morning,afternoon,evening|}. It is ${1}, right?');
-			const docs : any = new vscode.MarkdownString("Inserts a snippet that lets you select [link](x.ts).");
-			snippetCompletion.documentation = docs;
-			docs.baseUri = vscode.Uri.parse('http://example.com/a/b/c/');
-
-			// a completion item that can be accepted by a commit character,
-			// the `commitCharacters`-property is set which means that the completion will
-			// be inserted and then the character will be typed.
-			const commitCharacterCompletion = new vscode.CompletionItem('console');
-			commitCharacterCompletion.commitCharacters = ['.'];
-			commitCharacterCompletion.documentation = new vscode.MarkdownString('Press `.` to get `console.`');
-
-			// a completion item that retriggers IntelliSense when being accepted,
-			// the `command`-property is set which the editor will execute after 
-			// completion has been inserted. Also, the `insertText` is set so that 
-			// a space is inserted after `new`
-			const commandCompletion = new vscode.CompletionItem('new');
-			commandCompletion.kind = vscode.CompletionItemKind.Keyword;
-			commandCompletion.insertText = 'new ';
-			commandCompletion.command = { command: 'editor.action.triggerSuggest', title: 'Re-trigger completions...' };
-
+			
+			// TODO: enumerate schemas from local 'schemas' directory
+			// in the future we could pull these manifests from remote repositories
 			let fakeSchemas = [
 				'com.poplindata/click/1-0-0',
 				'com.poplindata/click/2-0-0',
 				'com.poplindata/view/1-0-0',
 				'com.google/recaptcha/1-0-0'
-			]
+			];
 
 			// new type of events?
 			const schemaCompletion = new vscode.CompletionItem('iglu:');
-			schemaCompletion.insertText = new vscode.SnippetString('iglu:${1|' + fakeSchemas.join(',') + '|}')
+			schemaCompletion.insertText = new vscode.SnippetString('iglu:${1|' + fakeSchemas.join(',') + '|}');
 			schemaCompletion.documentation = new vscode.MarkdownString('Attempts to autocomplete an Iglu reference');
 			schemaCompletion.kind = vscode.CompletionItemKind.Constant;
 			schemaCompletion.command = {
 				command: 'editor.action.triggerSuggest',
 				title: 'Retrigger'
-			}
+			};
 
 			// return all completion items as array
 			return [
-				simpleCompletion,
-				snippetCompletion,
-				commitCharacterCompletion,
-				commandCompletion,
 				schemaCompletion
 			];
 		}

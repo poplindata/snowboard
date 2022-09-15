@@ -1,0 +1,70 @@
+{
+    "Initialise collector": {
+        "scope": "javascript,typescript",
+        "prefix": "initCol",
+        "body": [
+            "newTracker('${1:sp}', '${2:collector.com}', {",
+            "  appId: '${3:app_id}',",
+            "  discoverRootDomain: ${4:true},",
+            "  cookieSameSite: '${5:Lax}', // Recommended",
+            "  contexts: {",
+            "    webPage: ${6:true} // default, can be omitted",
+            "  }",
+            "});"
+        ]
+    },
+    "Set subject": {
+        "scope": "javascript,typescript",
+        "prefix": "setSubject",
+        "body": [
+            "TODO: this all looks wrong?"
+        ]
+    },
+    "Send structured event": {
+        "scope": "javascript,typescript",
+        "prefix": "sendEvent",
+        "body": [
+            "trackStructEvent({",
+            "  category: '${1:category}',",
+            "  action: '${2:action}',",
+            "  label: '${3:label}',",
+            "  property: '${4:property}',",
+            "  value: ${5:1.0}",
+            "});"
+        ]
+    },
+    "Send self-describing JSON": {
+        "scope": "javascript,typescript",
+        "prefix": "sendJSON",
+        "body": [
+            "trackSelfDescribingEvent({",
+            "  event: {",
+            "    schema: '${1:iglu:com.example/example/jsonschema/1-0-0}',",
+            "    data: {",
+            "        productId: '${2:ASO01043}',",
+            "    }",
+            "  }",
+            "});"
+        ]
+    },
+    "Consent granted": {
+        "scope": "javascript,typescript",
+        "prefix": "consentGranted",
+        "body": [
+            "TODO: this is wrong"
+        ]
+    },
+    "Consent withdrawn": {
+        "scope": "javascript,typescript",
+        "prefix": "consentWithdrawn",
+        "body": [
+            "trackConsentWithdrawn({",
+            "  all: ${1:false},",
+            "  id: '${2:1234}',",
+            "  version: '${3:5}',",
+            "  name: '${4:document_name}',",
+            "  description: '${5:document_description}'",
+            "});"
+        ]
+    }
+}

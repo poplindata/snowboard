@@ -1,120 +1,252 @@
 {
   "name": "snowboard",
-	"displayName": "snowboard",
-	"description": "",
-	"version": "0.0.1",
-	"engines": {
-		"vscode": "^1.68.0"
-	},
-	"categories": [
-		"Other",
-		"Snippets"
-	],
-	"activationEvents": [
-        "onCommand:snowboard.helloWorld",
-		"onView:schemas"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "snowboard.helloWorld",
-				"title": "Hello World"
-			},
-			{
-				"command": "schemas.editEntry",
-				"title": "Edit",
-				"icon": {
-				  "light": "media/dep.svg",
-				  "dark": "media/dep.svg"
-				}
-			},
-			{
-				"command": "enrichments.editEnrichment",
-				"title": "Edit Enrichment",
-				"icon": "$(edit)"
-			},
-			{
-				"command": "environments.addEnvironment",
-				"title": "Add",
-				"icon": "$(settings-add)"
-			},
-			{
-				"command": "environments.refreshEnvironments",
-				"title": "Refresh",
-				"icon": "$(refresh)"
-			}
-		],
-		"views": {
-			"snowplow": [
-				{
-					"id": "environments",
-					"name": "Environments"
-				},
-				{
-					"id": "schemas",
-					"name": "Schemas"
-				},
-				{
-					"id": "enrichments",
-					"name": "Enrichments"
-				},
-				{
-					"id": "targets",
-					"name": "Targets"
-				}
-			]
-		},
-		"viewsContainers": {
-			"activitybar": [
-				{
-					"id": "snowplow",
-					"title": "Snowplow",
-					"icon": "media/dep.svg"
-				}
-			]
-		},
-		"menus": {
-			"view/title": [
-				{
-					"command": "environments.addEnvironment",
-					"when": "view == environments",
-					"group": "navigation"
-				},
-				{
-					"command": "environments.refreshEnvironments",
-					"when": "view == environments",
-					"group": "navigation"
-				}
-			],
-			"view/item/context": [
-				{
-					"command": "schemas.editEntry",
-					"when": "view == schemas && viewItem == schema",
-					"group": "inline"
-				}
-			]
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js"
-	},
-	"devDependencies": {
-		"@types/vscode": "^1.68.0",
-		"@types/glob": "^7.2.0",
-		"@types/mocha": "^9.1.1",
-		"@types/node": "16.x",
-		"@typescript-eslint/eslint-plugin": "^5.27.0",
-		"@typescript-eslint/parser": "^5.27.0",
-		"eslint": "^8.16.0",
-		"glob": "^8.0.3",
-		"mocha": "^10.0.0",
-		"typescript": "^4.7.2",
-		"@vscode/test-electron": "^2.1.3"
-	}
+  "displayName": "snowboard",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.68.0"
+  },
+  "categories": [
+    "Other",
+    "Snippets"
+  ],
+  "activationEvents": [
+    "onCommand:snowboard.helloWorld",
+    "onCommand:snowboard.openMicro",
+    "onCommand:snowboard.newSchema",
+    "onCommand:snowboard.openMicroDebugger",
+    "onView:schemas",
+    "*"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "snippets": [
+      {
+        "path": "./snippets/android.code-snippets"
+      },
+      {
+        "path": "./snippets/arduino.code-snippets"
+      },
+      {
+        "path": "./snippets/cpp.code-snippets"
+      },
+      {
+        "path": "./snippets/dotnet.code-snippets"
+      },
+      {
+        "path": "./snippets/flutter.code-snippets"
+      },
+      {
+        "path": "./snippets/go.code-snippets"
+      },
+      {
+        "path": "./snippets/ios.code-snippets"
+      },
+      {
+        "path": "./snippets/java.code-snippets"
+      },
+      {
+        "path": "./snippets/javascript-node.code-snippets"
+      },
+      {
+        "path": "./snippets/javascript-web.code-snippets"
+      },
+      {
+        "path": "./snippets/lua.code-snippets"
+      },
+      {
+        "path": "./snippets/php.code-snippets"
+      },
+      {
+        "path": "./snippets/pixel-tracker.code-snippets"
+      },
+      {
+        "path": "./snippets/python.code-snippets"
+      },
+      {
+        "path": "./snippets/react-native.code-snippets"
+      },
+      {
+        "path": "./snippets/roku.code-snippets"
+      },
+      {
+        "path": "./snippets/ruby.code-snippets"
+      },
+      {
+        "path": "./snippets/scala.code-snippets"
+      },
+      {
+        "path": "./snippets/tracking-cli.code-snippets"
+      },
+      {
+        "path": "./snippets/unity.code-snippets"
+      },
+      {
+        "path": "./snippets/json-schema.code-snippets"
+      }
+    ],
+    "keybindings": [
+      {
+          "key": "cmd+k a",
+          "command": "editor.action.insertSnippet",
+          "when": "editorTextFocus && !editorReadonly",
+          "args": {
+              "langId": "json",
+              "name": "Array property"
+          }
+      },
+      {
+          "key": "cmd+k n",
+          "command": "editor.action.insertSnippet",
+          "when": "editorTextFocus && !editorReadonly",
+          "args": {
+              "langId": "json",
+              "name": "Number property"
+          }
+      },
+      {
+          "key": "cmd+k s",
+          "command": "editor.action.insertSnippet",
+          "when": "editorTextFocus && !editorReadonly",
+          "args": {
+              "langId": "json",
+              "name": "String property"
+          }
+      },
+      {
+          "key": "cmd+k b",
+          "command": "editor.action.insertSnippet",
+          "when": "editorTextFocus && !editorReadonly",
+          "args": {
+              "langId": "json",
+              "name": "Boolean property"
+          }
+      },
+      {
+          "key": "cmd+k o",
+          "command": "editor.action.insertSnippet",
+          "when": "editorTextFocus && !editorReadonly",
+          "args": {
+              "langId": "json",
+              "name": "Object property"
+          }
+      }
+    ],
+    "commands": [
+      {
+        "command": "snowboard.helloWorld",
+        "title": "Hello World"
+      },
+      {
+        "command": "snowboard.openMicro",
+        "title": "Open Micro (all)"
+      },
+      {
+        "command": "snowboard.newSchema",
+        "title": "Create new schema"
+      },
+      {
+        "command": "snowboard.openMicroDebugger",
+        "title": "Open debugger (micro)"
+      },
+      {
+        "command": "schemas.editEntry",
+        "title": "Edit",
+        "icon": {
+          "light": "media/dep.svg",
+          "dark": "media/dep.svg"
+        }
+      },
+      {
+        "command": "enrichments.editEnrichment",
+        "title": "Edit Enrichment",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "environments.addEnvironment",
+        "title": "Add",
+        "icon": "$(settings-add)"
+      },
+      {
+        "command": "environments.refreshEnvironments",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      }
+    ],
+    "views": {
+      "snowplow": [
+        {
+          "id": "environments",
+          "name": "Environments"
+        },
+        {
+          "id": "schemas",
+          "name": "Schemas"
+        },
+        {
+          "id": "enrichments",
+          "name": "Enrichments"
+        },
+        {
+          "id": "targets",
+          "name": "Targets"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "snowplow",
+          "title": "Snowplow",
+          "icon": "media/dep.svg"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "environments.addEnvironment",
+          "when": "view == environments",
+          "group": "navigation"
+        },
+        {
+          "command": "environments.refreshEnvironments",
+          "when": "view == environments",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "schemas.editEntry",
+          "when": "view == schemas && viewItem == schema",
+          "group": "inline"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.2.0",
+    "@types/mocha": "^9.1.1",
+    "@types/node": "16.x",
+    "@types/vscode": "^1.68.0",
+    "@typescript-eslint/eslint-plugin": "^5.27.0",
+    "@typescript-eslint/parser": "^5.27.0",
+    "@vscode/test-electron": "^2.1.3",
+    "eslint": "^8.16.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.0.0",
+    "typescript": "^4.7.2"
+  },
+  "dependencies": {
+    "nearly": "^1.8.1",
+    "node-sql-parser": "^4.4.0"
+  }
 }
