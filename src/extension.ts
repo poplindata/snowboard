@@ -4,6 +4,9 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { ThemeColor } from "vscode";
+import common = require('mocha/lib/interfaces/common');
+
+
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -34,8 +37,137 @@ export function activate(context: vscode.ExtensionContext) {
 
 	});
 
+
+
+	function handleResult<T>(resolve: (result: T) => void, reject: (error: Error) => void, error: Error | null | undefined, result: T): void {
+		if (error) {
+			reject(massageError(error));
+		} else {
+			resolve(result);
+		}
+	}
+
+	function massageError(error: Error & { code?: string }): Error {
+		if (error.code === 'ENOENT') {
+			return vscode.FileSystemError.FileNotFound();
+		}
+
+		if (error.code === 'EISDIR') {
+			return vscode.FileSystemError.FileIsADirectory();
+		}
+
+		if (error.code === 'EEXIST') {
+			return vscode.FileSystemError.FileExists();
+		}
+
+		if (error.code === 'EPERM' || error.code === 'EACCESS') {
+			return vscode.FileSystemError.NoPermissions();
+		}
+
+		return error;
+	}
+
+	function writefile(path: string, content: Buffer): Promise<void> {
+		return new Promise<void>((resolve, reject) => {
+			fs.writeFile(path, content, error => handleResult(resolve, reject, error, void 0));
+		});
+	}
+
+	function incrementSchemaVersion(component: string, schema: string): { version: string, schema: string} {
+		// replacy replacy
+		let snowplowSchema = JSON.parse(schema); // try
+		let newVersion = '1-0-0';
+		let version: string = snowplowSchema.self.version;
+		let versionSplit = version.split("-");
+		if (component === 'addition') {
+			let currentAddition: number = parseInt(versionSplit[2]) + 1;
+			newVersion = `${versionSplit[0]}-${versionSplit[1]}-${currentAddition}`;
+		} else if (component === 'revision') {
+			let currentRevision: number = parseInt(versionSplit[1]) + 1;
+			newVersion = `${versionSplit[0]}-${currentRevision}-0`;
+		} else {
+			// assume model change
+			let currentModel: number = parseInt(versionSplit[0]) + 1;
+			newVersion = `${currentModel}-0-0`;
+		}
+		
+		snowplowSchema.self.version = newVersion;
+
+		return {
+			'version': newVersion,
+			'schema': JSON.stringify(snowplowSchema, null, 4)
+		};
+	}
+
+
+	function createBrandNewSchema(){
+		// todo: name this better
+		let success = vscode.commands.executeCommand('workbench.action.files.newUntitledFile').then(x => {
+			const editor = vscode.window.activeTextEditor;
+			if (editor) {
+				let news = `
+{
+	"\\$schema": "http://iglucentral.com/schemas/com.snowplowanalytics.self-desc/schema/jsonschema/1-0-0#",
+	"self": {
+		"vendor": "\${1:${vscode.workspace.getConfiguration('snowboard').get('defaultVendor')}}",
+		"name": "\${2:example}",
+		"format": "jsonschema",
+		"version": "\${3:1-0-0}"
+	},
+	"description": "\${4:description}",
+	"type": "object",
+	"properties": {
+		$0
+	}
+}
+				`;
+
+				let snippet = new vscode.SnippetString(news);
+				editor.insertSnippet(snippet);
+			} else {
+				vscode.window.showInformationMessage('no editor');
+			}
+		});		
+	}
+
+	function createNewSchema(component: string) {
+		const wsedit = new vscode.WorkspaceEdit();
+		if (!vscode.workspace.workspaceFolders) {
+			vscode.window.showInformationMessage("A folder or workspace must be opened to use this command.");
+			return;
+		}
+
+		const editor = vscode.window.activeTextEditor;
+		if (editor) {
+			let currentDirectory = path.dirname(editor.document.uri.fsPath);
+			let document = editor.document;
+			const documentText = document.getText();
+			let newSchema = incrementSchemaVersion(component, documentText);
+
+			const newPath = path.join(currentDirectory, newSchema.version);
+			writefile(newPath, Buffer.from(newSchema.schema));
+			// now open the newly created schema
+			vscode.workspace.openTextDocument(newPath).then(doc => {
+				vscode.window.showTextDocument(doc);
+			});
+		}
+	}
+
 	let newSchema = vscode.commands.registerCommand('snowboard.newSchema', () => {
-		let success = vscode.commands.executeCommand('workbench.action.files.newUntitledFile');
+		// let success = vscode.commands.executeCommand('workbench.action.files.newUntitledFile');
+		createBrandNewSchema();
+	});
+
+	let newAddition = vscode.commands.registerCommand('snowboard.newAddition', () => {
+		createNewSchema("addition");
+	});
+
+	let newRevision = vscode.commands.registerCommand('snowboard.newRevision', () => {
+		createNewSchema("revision");
+	});
+
+	let newModel = vscode.commands.registerCommand('snowboard.newModel', () => {
+		createNewSchema("model");
 	});
 
 	let openDebugger = vscode.commands.registerCommand('snowboard.openMicroDebugger', () => {

@@ -146,6 +146,18 @@
         "title": "Create new schema"
       },
       {
+        "command": "snowboard.newAddition",
+        "title": "New schema addition (1-0-x)"
+      },
+      {
+        "command": "snowboard.newRevision",
+        "title": "New schema revision (1-x-0)"
+      },
+      {
+        "command": "snowboard.newModel",
+        "title": "New schema model (x-0-0)"
+      },
+      {
         "command": "snowboard.openMicroDebugger",
         "title": "Open debugger (micro)"
       },
@@ -173,6 +185,50 @@
         "icon": "$(refresh)"
       }
     ],
+    "configuration": {
+      "title": "Snowboard",
+      "properties": {
+        "snowboard.defaultVendor": {
+          "type": "string",
+          "default": "com.acme",
+          "description": "Specifies the default vendor to use for new schemas"
+        },
+        "snowboard.localSchemasFolder": {
+          "type": ["string", "null"],
+          "default": "schemas/",
+          "description": "Folder (relative to the current workspace) containing your local Iglu schemas"
+        },
+        "snowboard.environments": {
+          "type": ["array", "null"],
+          "description": "Define Snowplow environments",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the environment",
+                "default": "default environment"
+              },
+              "environment_type": {
+                "type": "string",
+                "enum": ["micro", "mini", "full"],
+                "default": "full"
+              },
+              "collector_url": {
+                "type": "string",
+                "description": "URL of the collector endpoint for this environment",
+                "default": "https://acme.com"
+              }
+            },
+            "default": {
+              "name": "default env",
+              "environment_type": "full",
+              "collector_url": "https://acme.com"
+            }
+          }
+        }
+      }
+    },
     "views": {
       "snowplow": [
         {
