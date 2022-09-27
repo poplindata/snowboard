@@ -87,52 +87,56 @@
     ],
     "keybindings": [
       {
-          "key": "cmd+k a",
-          "command": "editor.action.insertSnippet",
-          "when": "editorTextFocus && !editorReadonly",
-          "args": {
-              "langId": "json",
-              "name": "Array property"
-          }
+        "key": "cmd+k a",
+        "command": "editor.action.insertSnippet",
+        "when": "editorTextFocus && !editorReadonly",
+        "args": {
+          "langId": "json",
+          "name": "Array property"
+        }
       },
       {
-          "key": "cmd+k n",
-          "command": "editor.action.insertSnippet",
-          "when": "editorTextFocus && !editorReadonly",
-          "args": {
-              "langId": "json",
-              "name": "Number property"
-          }
+        "key": "cmd+k n",
+        "command": "editor.action.insertSnippet",
+        "when": "editorTextFocus && !editorReadonly",
+        "args": {
+          "langId": "json",
+          "name": "Number property"
+        }
       },
       {
-          "key": "cmd+k s",
-          "command": "editor.action.insertSnippet",
-          "when": "editorTextFocus && !editorReadonly",
-          "args": {
-              "langId": "json",
-              "name": "String property"
-          }
+        "key": "cmd+k s",
+        "command": "editor.action.insertSnippet",
+        "when": "editorTextFocus && !editorReadonly",
+        "args": {
+          "langId": "json",
+          "name": "String property"
+        }
       },
       {
-          "key": "cmd+k b",
-          "command": "editor.action.insertSnippet",
-          "when": "editorTextFocus && !editorReadonly",
-          "args": {
-              "langId": "json",
-              "name": "Boolean property"
-          }
+        "key": "cmd+k b",
+        "command": "editor.action.insertSnippet",
+        "when": "editorTextFocus && !editorReadonly",
+        "args": {
+          "langId": "json",
+          "name": "Boolean property"
+        }
       },
       {
-          "key": "cmd+k o",
-          "command": "editor.action.insertSnippet",
-          "when": "editorTextFocus && !editorReadonly",
-          "args": {
-              "langId": "json",
-              "name": "Object property"
-          }
+        "key": "cmd+k o",
+        "command": "editor.action.insertSnippet",
+        "when": "editorTextFocus && !editorReadonly",
+        "args": {
+          "langId": "json",
+          "name": "Object property"
+        }
       }
     ],
     "commands": [
+      {
+        "command": "snowboard.generateFakeData",
+        "title": "Generate fake event"
+      },
       {
         "command": "snowboard.helloWorld",
         "title": "Hello World"
@@ -194,12 +198,18 @@
           "description": "Specifies the default vendor to use for new schemas"
         },
         "snowboard.localSchemasFolder": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "default": "schemas/",
           "description": "Folder (relative to the current workspace) containing your local Iglu schemas"
         },
         "snowboard.environments": {
-          "type": ["array", "null"],
+          "type": [
+            "array",
+            "null"
+          ],
           "description": "Define Snowplow environments",
           "items": {
             "type": "object",
@@ -211,7 +221,11 @@
               },
               "environment_type": {
                 "type": "string",
-                "enum": ["micro", "mini", "full"],
+                "enum": [
+                  "micro",
+                  "mini",
+                  "full"
+                ],
                 "default": "full"
               },
               "collector_url": {
@@ -302,6 +316,8 @@
     "typescript": "^4.7.2"
   },
   "dependencies": {
+    "@faker-js/faker": "^7.5.0",
+    "json-schema-faker": "^0.5.0-rcv.44",
     "nearly": "^1.8.1",
     "node-sql-parser": "^4.4.0"
   }
