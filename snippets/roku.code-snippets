@@ -1,0 +1,39 @@
+{
+    "Initialise collector": {
+        "scope": "brightscript,brighterscript",
+        "prefix": "initCol",
+        "body": [
+            "m.global.snowplow.init = {",
+            "    network: {",
+            "        collector: \"${1:http://collector.com}\"",
+            "    }",
+            "}"
+        ]
+    },
+    "Send structured event": {
+        "scope": "brightscript,brighterscript",
+        "prefix": "sendEvent",
+        "body": [
+            "m.global.snowplow.structured = { se_ca: \"${1:category}\", se_ac: \"${2:action}\", se_pr: \"${3:property}\", se_va: ${4:1} }"
+        ]
+    },
+    "Send self-describing JSON": {
+        "scope": "brightscript,brighterscript",
+        "prefix": "sendJSON",
+        "body": [
+            "m.global.snowplow.selfDescribing = {",
+            "    data: {",
+            "        saveId: \"${1:4321}\"",
+            "    },",
+            "    schema: \"${5:iglu:com.example/example/jsonschema/1-0-0}\"",
+            "}"
+        ]
+    },
+    "Screen view (apps only)": {
+        "scope": "brightscript,brighterscript",
+        "prefix": "screenView",
+        "body": [
+            "m.global.snowplow.screenView = { id: \"${1:screen_id}\", name: \"${2:screen_name}\" }"
+        ]
+    }
+}

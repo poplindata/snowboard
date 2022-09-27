@@ -1,0 +1,85 @@
+{
+    "Initialise collector": {
+        "scope": "kotlin,java",
+        "prefix": "initCol",
+        "body": [
+            "TrackerController tracker = Snowplow.createTracker(context, \"${1:appTracker}\", ${2:com.collector}, HttpMethod.POST);"
+        ]
+    },
+    "Send structured event": {
+        "scope": "kotlin,java",
+        "prefix": "sendEvent",
+        "body": [
+            "Event event = new Structured(\"${1:category}\", \"${2:action}\"); tracker.track(event);"
+        ]
+    },
+    "Send self-describing JSON": {
+        "scope": "kotlin,java",
+        "prefix": "sendJSON",
+        "body": [
+            "SelfDescribingJson sdj = new SelfDescribingJson(\"${3:iglu:com.example/example/jsonschema/1-0-0}\", attributes);",
+            "SelfDescribing event = new SelfDescribing(sdj);",
+            "tracker.track(event);"
+        ]
+    },
+    "Timing": {
+        "scope": "kotlin,java",
+        "prefix": "timing",
+        "body": [
+            "Timing event = new Timing(\"${1:category}\", \"${2:variable}\", ${3:5})",
+            "    .label(\"${4:label}\");",
+            "                ",
+            "tracker.track(event);"
+        ]
+    },
+    "Screen view (apps only)": {
+        "scope": "kotlin,java",
+        "prefix": "screenView",
+        "body": [
+            "ScreenView event = new ScreenView(\"screen\", UUID.<em>randomUUID</em>().toString()); tracker.track(event); TODO"
+        ]
+    },
+    "Consent granted": {
+        "scope": "kotlin,java",
+        "prefix": "consentGranted",
+        "body": [
+            "ConsentGranted event = new ConsentGranted(\"${1:2022-05-08T18:12:02+00:00}\", \"${2:document_id}\", \"${3:document_version}\")",
+            "        .documentDescription(\"${4:doc description}\")",
+            "        .documentName(\"${5:doc name}\");",
+            "tracker.track(event);"
+        ]
+    },
+    "Consent withdrawn": {
+        "scope": "kotlin,java",
+        "prefix": "consentWithdrawn",
+        "body": [
+            "ConsentWithdrawn event = new ConsentWithdrawn(true, \"${1:document_id}\", \"${2:document_version}\")",
+            "        .documentDescription(\"${3:doc description}\")",
+            "        .documentName(\"${4:doc name}\");",
+            "tracker.track(event);"
+        ]
+    },
+    "Ecommerce": {
+        "scope": "kotlin,java",
+        "prefix": "ecommerce",
+        "body": [
+            "EcommerceTransactionItem item = new EcommerceTransactionItem(\"${1:sku}\", ${2:35.00}, ${3:1}) TODO: this is a mess",
+            "    .name(\"${4:Acme 1}\")",
+            "    .category(\"${5:Stuff}\")",
+            "    .currency(\"${6:USD}\");",
+            "List items = new LinkedList();",
+            "items.add(item);",
+            "EcommerceTransaction event = new EcommerceTransaction(\"${7:order-1}\", ${8:40.00}, items)",
+            "    .shipping(${9:5.00});",
+            "tracker.track(event);"
+        ]
+    },
+    "Deep Link": {
+        "scope": "kotlin,java",
+        "prefix": "deepLink",
+        "body": [
+            "DeepLinkReceived event = new DeepLinkReceived(deepLinkUrl).referrer(referrer);",
+            "tracker.track(event);"
+        ]
+    }
+}

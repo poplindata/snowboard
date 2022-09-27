@@ -1,0 +1,110 @@
+{
+    "Initialise collector": {
+        "scope": "javascript,typescript,javascriptreact,typescriptreact",
+        "prefix": "initCol",
+        "body": [
+            "const tracker = createTracker( TODO: namespace?",
+            "    '${1:appTracker}',",
+            "    {",
+            "      endpoint: ${2:collector.com},",
+            "    },",
+            ");"
+        ]
+    },
+    "Set subject": {
+        "scope": "javascript,typescript,javascriptreact,typescriptreact",
+        "prefix": "setSubject",
+        "body": [
+            "tracker.setSubjectData({",
+            "    userId: '${1:tester}',",
+            "    domainUserId: '${2:5d79770b-015b-4af8-8c91-b2ed6faf4b1e}'",
+            "});"
+        ]
+    },
+    "Send structured event": {
+        "scope": "javascript,typescript,javascriptreact,typescriptreact",
+        "prefix": "sendEvent",
+        "body": [
+            "tracker.trackStructuredEvent({",
+            "  category: '${1:category}',",
+            "  action: '${2:action}',",
+            "  label: '${3:label}',",
+            "  property: '${4:property}',",
+            "  value: ${5:123.00}",
+            "});"
+        ]
+    },
+    "Send self-describing JSON": {
+        "scope": "javascript,typescript,javascriptreact,typescriptreact",
+        "prefix": "sendJSON",
+        "body": [
+            "tracker.trackSelfDescribingEvent({",
+            "    schema: '${1:iglu:com.snowplowanalytics.snowplow/link_click/jsonschema/1-0-1}',",
+            "    data: {targetUrl: '${2:http://a-target-url.com}'}",
+            "});"
+        ]
+    },
+    "Timing": {
+        "scope": "javascript,typescript,javascriptreact,typescriptreact",
+        "prefix": "timing",
+        "body": [
+            "tracker.trackTimingEvent({",
+            "    category: '${1:category}',",
+            "    variable: '${2:variable}',",
+            "    timing: ${3:5},",
+            "    label: '${4:optional-label}'",
+            "});"
+        ]
+    },
+    "Screen view": {
+        "scope": "javascript,typescript,javascriptreact,typescriptreact",
+        "prefix": "screenView",
+        "body": [
+            "tracker.trackScreenViewEvent({",
+            "    name: '${1:screen_name}',",
+            "    id: '${2:5d79770b-015b-4af8-8c91-b2ed6faf4b1e}',",
+            "    type: '${3:carousel}',",
+            "    previousName: '${4:previous-screen}',",
+            "    previousId: '${5:00d71340-342e-4f3d-b9fd-4de728ffba7a}',",
+            "    previousType: '${6:feed}',",
+            "    transitionType: '${7:basic}'",
+            "});"
+        ]
+    },
+    "Consent granted": {
+        "scope": "javascript,typescript,javascriptreact,typescriptreact",
+        "prefix": "consentGranted",
+        "body": [
+            "tracker.trackConsentGrantedEvent({",
+            "    expiry: '${1:2022-01-01T00:00:00Z}',",
+            "    documentId: '${2:doc_id}',",
+            "    version: '${3:1.1}',",
+            "    name: '${4:document_name}',",
+            "    documentDescription: '${5:document_description}'",
+            "});"
+        ]
+    },
+    "Consent withdrawn": {
+        "scope": "javascript,typescript,javascriptreact,typescriptreact",
+        "prefix": "consentWithdrawn",
+        "body": [
+            "tracker.trackConsentWithdrawnEvent({",
+            "    all: ${1:true},",
+            "    documentId: '${2:doc_id}',",
+            "    version: '${3:1.1}',",
+            "    name: '${4:document_name}',",
+            "    documentDescription: '${5:document_description}'",
+            "});"
+        ]
+    },
+    "Deep Link": {
+        "scope": "javascript,typescript,javascriptreact,typescriptreact",
+        "prefix": "deepLink",
+        "body": [
+            "tracker.trackDeepLinkReceivedEvent({",
+            "    url: '${1:https://deeplink.com}',",
+            "    referrer: '${2:http://refr.com}',",
+            "});"
+        ]
+    }
+}

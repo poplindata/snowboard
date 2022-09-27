@@ -1,0 +1,33 @@
+{
+    "Initialise collector": {
+        "scope": "php",
+        "prefix": "initCol",
+        "body": [
+            "$emitter = new SyncEmitter($${1:collector.com}-, \"https\", \"POST\", ${2:10}, ${3:false});",
+            "$subject = new Subject();",
+            "$tracker = new Tracker($emitter, $subject);"
+        ]
+    },
+    "Set subject": {
+        "scope": "php",
+        "prefix": "setSubject",
+        "body": [
+            "$subject = new Subject();",
+            "$subject->setPlatform(\"${1:srv}\");"
+        ]
+    },
+    "Send structured event": {
+        "scope": "php",
+        "prefix": "sendEvent",
+        "body": [
+            "trackStructEvent($category, $action, $label = NULL, $property = NULL, $value = NULL, $context = NULL, $tstamp = NULL) TODO: this looks incorrect"
+        ]
+    },
+    "Screen view": {
+        "scope": "php",
+        "prefix": "screenView",
+        "body": [
+            "trackScreenView($name = NULL, $id = NULL, $context = NULL, $tstamp = NULL) TODO: this looks wrong"
+        ]
+    }
+}

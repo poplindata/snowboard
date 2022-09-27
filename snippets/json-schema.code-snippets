@@ -1,0 +1,119 @@
+{
+	"Number property": {
+        "prefix": ["number"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": \"number\"", "}"],
+        "description": "A for loop."
+    },
+    "String property": {
+        "prefix": ["string"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": \"string\"", "}"],
+        "description": "A for loop."
+    },
+    "Integer property": {
+        "prefix": ["string"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": \"integer\"", "}"],
+        "description": "A for loop."
+    },
+    "Boolean property": {
+        "prefix": ["boolean"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": \"boolean\"", "}"],
+        "description": "A for loop."
+    },
+    "Array property": {
+        "prefix": ["array"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": \"array\",", "\t\"items\": {", "\t\t\"type\": \"${2:type}\"", "\t}", "}"],
+        "description": "An (untyped) array"
+    },
+    "Object property": {
+        "prefix": ["object"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": \"object\",", "\t\"properties\": {", "\t\t${2}", "\t}", "}"],
+        "description": "An object"
+    },
+    "Datetime / timestamp property": {
+        "prefix": ["date-time"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": \"string\",", "\t\"format\": \"date-time\"", "}"],
+        "description": "A datetime (string) property"
+    },
+    "URI property": {
+        "prefix": ["uri"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": \"string\",", "\t\"format\": \"uri\"", "}"],
+        "description": "A uri property"
+    },
+    // array types
+
+    "Numeric array property": {
+        "prefix": ["numeric array"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": \"array\",", "\t\"items\": {", "\t\t\"type\": \"number\"", "\t}", "}"],
+        "description": "A numeric array"
+    },
+    "String array property": {
+        "prefix": ["string array"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": \"array\",", "\t\"items\": {", "\t\t\"type\": \"string\"", "\t}", "}"],
+        "description": "A string array"
+    },
+    "Integer array property": {
+        "prefix": ["integer array"],
+        "body": ["\"${1:name}\": {", "\t\"type\": \"array\",", "\t\"items\": {", "\t\t\"type\": \"integer\"", "\t}", "}"],
+        "description": "An array of integers"
+    },
+    "Boolean array property": {
+        "prefix": ["boolean array"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": \"array\",", "\t\"items\": {", "\t\t\"type\": \"boolean\"", "\t}", "}"],
+        "description": "An array of booleans"
+    },
+    "Array of arrays property": {
+        "prefix": ["array"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": \"array\",", "\t\"items\": {", "\t\t\"type\": \"array\"", "\t}", "}"],
+        "description": "An array of booleans"
+    },
+    "Object array property": { // TODO: add the object properties to this
+        "prefix": ["object array"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": \"array\",", "\t\"items\": {", "\t\t\"type\": \"object\"", "\t}", "}"],
+        "description": "An array of booleans"
+    },
+
+
+    // nullable types, add a 'n' afterwards for shortcuts?
+	"Number property (nullable)": {
+        "prefix": ["number"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": [\"number\", \"null\"],", "}"],
+        "description": "A for loop."
+    },
+    "String property (nullable)": {
+        "prefix": ["string"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": [\"string\", \"null\"],", "}"],
+        "description": "A for loop."
+    },
+    "Integer property (nullable)": {
+        "prefix": ["string"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": [\"integer\", \"null\"],", "}"],
+        "description": "A for loop."
+    },
+    "Boolean property (nullable)": {
+        "prefix": ["boolean"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": [\"boolean\", \"null\"],", "}"],
+        "description": "A for loop."
+    },
+    "Array property (nullable)": {
+        "prefix": ["array"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": [\"array\", \"null\"],", "\t\"items\": {", "\t\t\"type\": \"${2:type}\"", "\t}", "}"],
+        "description": "An (untyped) array"
+    },
+    "Object property (nullable)": {
+        "prefix": ["object"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": [\"object\", \"null\"],", "\t\"properties\": {", "\t\t${2}", "\t}", "}"],
+        "description": "An object"
+    },
+    "Datetime / timestamp property (nullable)": {
+        "prefix": ["date-time"],
+        "body": ["\"${1:name1}\": {", "\t\"type\": [\"string\", \"null\"],", "\t\"format\": \"date-time\"", "}"],
+        "description": "A datetime (string) property"
+    },
+    "URI property (nullable)": {
+        "prefix": ["uri"],
+        "body": ["\"${1:name}\": {", "\t\"type\": [\"string\", \"null\"],", "\t\"format\": \"uri\"", "}"],
+        "description": "A uri property"
+    }
+    // n = number, s = string, i = integer, b = boolean, a = array, o = object
+    // d = datetime, u = uri
+}

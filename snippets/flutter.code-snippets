@@ -1,0 +1,72 @@
+{
+    "Initialise collector": {
+        "scope": "dart",
+        "prefix": "initCol",
+        "body": [
+            "SnowplowTracker tracker = await Snowplow.createTracker( namespace: '${1:namespace}', endpoint: '${2:http://collector.com}' );"
+        ]
+    },
+    "Send structured event": {
+        "scope": "dart",
+        "prefix": "sendEvent",
+        "body": [
+            "tracker.track(Structured( category: '${1:category}', action: '${2:action}', label: '${3:label}', property: '${4:property}', value: ${5:123}, ));"
+        ]
+    },
+    "Send self-describing JSON": {
+        "scope": "dart",
+        "prefix": "sendJSON",
+        "body": [
+            "tracker.track(SelfDescribing( schema: '${1:iglu:com.example/example/jsonschema/1-0-0}', data: {  } ));"
+        ]
+    },
+    "Timing": {
+        "scope": "dart",
+        "prefix": "timing",
+        "body": [
+            "tracker.track(Timing(",
+            "    category: '${1:category}',",
+            "    variable: '${2:variable}',",
+            "    timing: ${3:1},",
+            "    label: '${4:label}',",
+            "));"
+        ]
+    },
+    "Screen view": {
+        "scope": "dart",
+        "prefix": "screenView",
+        "body": [
+            "tracker.track(ScreenView(",
+            "    id: '${1:screen_id}',",
+            "    name: '${2:screen_name}',",
+            "    type: '${3:screen_type}',",
+            "    transitionType: '${4:none}'));"
+        ]
+    },
+    "Consent granted": {
+        "scope": "dart",
+        "prefix": "consentGranted",
+        "body": [
+            "tracker.track(ConsentGranted(",
+            "    expiry: DateTime.now(),",
+            "    documentId: '${1:1234}',",
+            "    version: '${2:5}',",
+            "    name: '${3:name}',",
+            "    documentDescription: '${4:description}',",
+            "));"
+        ]
+    },
+    "Consent withdrawn": {
+        "scope": "dart",
+        "prefix": "consentWithdrawn",
+        "body": [
+            "tracker.track(ConsentWithdrawn(",
+            "    all: ${1:false},",
+            "    documentId: '${2:1234}',",
+            "    version: '${3:5}',",
+            "    name: '${4:name}',",
+            "    documentDescription: '${5:description}',",
+            "));"
+        ]
+    }
+}

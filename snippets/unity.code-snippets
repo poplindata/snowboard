@@ -1,0 +1,64 @@
+{
+    "Initialise collector": {
+        "scope": "csharp",
+        "prefix": "initCol",
+        "body": [
+            "IEmitter e1 = new AsyncEmitter (\"${1:com.collector.acme}\", HttpProtocol.HTTPS, HttpMethod.POST, ${2:50}, ${3:30000}, ${4:30000});"
+        ]
+    },
+    "Set subject": {
+        "scope": "csharp",
+        "prefix": "setSubject",
+        "body": [
+            "Subject s1 = new Subject();",
+            "s1.SetUserId(\"${1:unity@snowplowanalytics.com}\");"
+        ]
+    },
+    "Send structured event": {
+        "scope": "csharp",
+        "prefix": "sendEvent",
+        "body": [
+            "t1.Track(new Structured()",
+            "    .SetCategory(\"${1:category}\")",
+            "    .SetAction(\"${2:action}\")",
+            "    .SetLabel(\"${3:label}\")",
+            "    .SetProperty(\"${4:property}\")",
+            "    .SetValue(${5:1.00})",
+            "    .Build());"
+        ]
+    },
+    "Send self-describing JSON": {
+        "scope": "csharp",
+        "prefix": "sendJSON",
+        "body": [
+            "// Data as a Dictionary",
+            "Dictionary<string, object> data = new Dictionary<string, object>();",
+            "data.Add(\"${1:Event}\", \"${2:Data}\")",
+            "",
+            "// We then create a new SelfDescribingJson",
+            "SelfDescribingJson json = new SelfDescribingJson(\"${3:iglu:com.example/example/jsonschema/1-0-0}\", data);"
+        ]
+    },
+    "Timing": {
+        "scope": "csharp",
+        "prefix": "timing",
+        "body": [
+            "t1.Track(new Timing()",
+            "    .SetCategory(\"${1:category}\")",
+            "    .SetVariable(\"${2:variable}\")",
+            "    .SetTiming(${3:1})",
+            "    .SetLabel(\"${4:label}\")",
+            "    .Build());"
+        ]
+    },
+    "Screen view": {
+        "scope": "csharp",
+        "prefix": "screenView",
+        "body": [
+            "t1.Track(new ScreenView()",
+            "    .SetName(\"${1:screen_name}\")",
+            "    .SetId(\"${2:screen_id}\")",
+            "    .Build());"
+        ]
+    }
+}
