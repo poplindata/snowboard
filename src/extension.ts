@@ -6,7 +6,8 @@ import * as path from 'path';
 import { ThemeColor } from "vscode";
 import common = require('mocha/lib/interfaces/common');
 import JsonSchemaFaker from 'json-schema-faker';
-
+import faker from '@faker-js/faker';
+import fetch from 'isomorphic-fetch';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -14,30 +15,51 @@ export function activate(context: vscode.ExtensionContext) {
 	
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "snowboard" is now active!');
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('snowboard.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from snowboarding!');
-	});
+	function makeIgluURI(path: string) {
+		// make Iglu uri from local file path
+		const [version, format, name, vendor] = path.split('/').reverse();
+		let uri = `iglu:${vendor}/${name}/${format}/${version}`
+		return uri;
+	}
 
-	let micro = vscode.commands.registerCommand('snowboard.openMicro', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		// vscode.window.showInformationMessage('Hello World from snowboarding!');
-		// vscode.open('https://localhost:9090/micro/all');
-		let microUri = 'http://localhost:9090/micro/all';
-		let success = vscode.commands.executeCommand('vscode.open', microUri, 1);
+	async function listLocalSchemas(): Promise<string[]> {
+		// list local schemas
+		const wsedit = new vscode.WorkspaceEdit();
+		if (!vscode.workspace.workspaceFolders) {
+			vscode.window.showInformationMessage("A folder or workspace must be opened to use this command.");
+			return [];
+		}
 
-		// probably makes more sense to open this as a webview...
+		let workspaceFolderPath: string = vscode.workspace.workspaceFolders[0].uri.path;
 
-	});
+		const resources = await vscode.workspace.findFiles('schemas/*/*/*/*');
+		const schemas = await Promise.all(resources.map(file => makeIgluURI(file.path)));
 
+		return schemas;
 
+	}
+
+	async function fetchIgluCentralSchemas(): Promise<string[]>{
+		// fetch the manifest file for Iglu Central
+		let schemas = fetch(
+			'http://iglucentral.com/schemas',
+			{
+				headers: {
+					'contentType': 'application/json'
+				}
+			}
+		).then(function(response) {
+			if (response.status >= 400) {
+				console.log("some kind of error", response.status);
+				return [];
+			}
+			return response.json();
+		}).then(function(r) {
+			return r;
+		});
+		return [];
+	}
 
 	function handleResult<T>(resolve: (result: T) => void, reject: (error: Error) => void, error: Error | null | undefined, result: T): void {
 		if (error) {
@@ -157,6 +179,8 @@ export function activate(context: vscode.ExtensionContext) {
 		// determine the current file / selected schema
 		// TODO: consider faker support here
 		const editor = vscode.window.activeTextEditor;
+		JsonSchemaFaker.extend('faker', () => faker);
+		JsonSchemaFaker.option({'alwaysFakeOptionals': true});
 		if (editor) {
 			let currentDirectory = path.dirname(editor.document.uri.fsPath);
 			let document = editor.document;
@@ -181,6 +205,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 	});
 
+
+
 	let newSchema = vscode.commands.registerCommand('snowboard.newSchema', () => {
 		// let success = vscode.commands.executeCommand('workbench.action.files.newUntitledFile');
 		createBrandNewSchema();
@@ -198,39 +224,26 @@ export function activate(context: vscode.ExtensionContext) {
 		createNewSchema("model");
 	});
 
-	let openDebugger = vscode.commands.registerCommand('snowboard.openMicroDebugger', () => {
-		const panel = vscode.window.createWebviewPanel(
-			'Micro Debugger',
-			'Micro Debugger',
-			vscode.ViewColumn.Two,
-			{
-				enableScripts: true
-			}
-		);
-		panel.webview.html = '<iframe src="http://localhost:3000" style="border: medium none; width: 100%; height: 1000px;"></iframe>';
-	});
+	// get Iglu schemas
+	let igluUris: string[] = [];
 
-	// command to create new untitled file
-	// workbench.action.files.newUntitledFile
+	// let remoteSchemas = fetchIgluCentralSchemas().then(function(x) {console.log('schemas:', x)});
+	let localSchemas = listLocalSchemas().then(x => igluUris.concat(x));
+	console.log('schemas length:', igluUris);
 
-
-	const provider1 = vscode.languages.registerCompletionItemProvider('*', {
+	const igluProvider = vscode.languages.registerCompletionItemProvider('*', {
 
 		provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {
 
-			
-			// TODO: enumerate schemas from local 'schemas' directory
-			// in the future we could pull these manifests from remote repositories
-			let fakeSchemas = [
-				'com.poplindata/click/1-0-0',
-				'com.poplindata/click/2-0-0',
-				'com.poplindata/view/1-0-0',
-				'com.google/recaptcha/1-0-0'
-			];
+
+			console.log('fetching schemas...');
+			let res = fetchIgluCentralSchemas();
+			console.log('schemas result:', res);
+			let fakeSchemas = ["iglu:com.sendgrid/group_resubscribe/jsonschema/1-0-0"]
 
 			// new type of events?
 			const schemaCompletion = new vscode.CompletionItem('iglu:');
-			schemaCompletion.insertText = new vscode.SnippetString('iglu:${1|' + fakeSchemas.join(',') + '|}');
+			schemaCompletion.insertText = new vscode.SnippetString('${1|' + fakeSchemas.join(',') + '|}');
 			schemaCompletion.documentation = new vscode.MarkdownString('Attempts to autocomplete an Iglu reference');
 			schemaCompletion.kind = vscode.CompletionItemKind.Constant;
 			schemaCompletion.command = {
@@ -245,30 +258,9 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
-	context.subscriptions.push(provider1);
+	context.subscriptions.push(igluProvider);
 
-
-	let x = vscode.commands.registerCommand('enrichments.editEnrichment', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('You are trying to edit an enrichment');
-	});
-
-	context.subscriptions.push(disposable);
-	context.subscriptions.push(micro);
 	context.subscriptions.push(newSchema);
-
-	// vscode.window.createTreeView('snowplowEnvironments', {
-	// 	treeDataProvider: new NodeDependenciesProvider('.'),
-	// })
-
-	// vscode.window.createTreeView('schemas', {
-	// 	treeDataProvider: new SchemasProvider('.')
-	// });
-
-	// vscode.window.createTreeView('enrichments', {
-	// 	treeDataProvider: new EnrichmentsProvider('.')
-	// });
 
 }
 
