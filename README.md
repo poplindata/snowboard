@@ -19,6 +19,9 @@ Not many yet.
 - Generate fake data
 - 
 
+# Todo
+- diagnostics for bad rows
+
 ## Keyboard shortcuts
 
 - JSON schema keyboard shortcuts
