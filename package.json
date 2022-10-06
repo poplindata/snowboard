@@ -292,7 +292,13 @@
           "group": "inline"
         }
       ]
-    }
+    },
+    "languages": [
+      {
+        "id": "jsonschema",
+        "filenamePatterns": ["jsonschema/*-*-*"]
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -304,6 +310,7 @@
   },
   "devDependencies": {
     "@types/glob": "^7.2.0",
+    "@types/isomorphic-fetch": "^0.0.36",
     "@types/mocha": "^9.1.1",
     "@types/node": "16.x",
     "@types/vscode": "^1.68.0",
