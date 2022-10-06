@@ -51,6 +51,7 @@ export class AuthenticationProvider
       title: AUTH_PROVIDER_NAME,
       prompt: "Organization ID",
       ignoreFocusOut: true,
+      placeHolder: "0a0a0a0a-b1b1-c2c2-3d3d-e4e4e4e4e4e4",
       validateInput: (value) =>
         UUID_PATTERN.test(value) ? "" : "Unexpected Organization ID format",
     });
@@ -60,6 +61,7 @@ export class AuthenticationProvider
       title: AUTH_PROVIDER_NAME,
       prompt: "API Key",
       password: true,
+      placeHolder: "f5f5f5f5-6a6a-b7b7-8c8c-d9d9d9d9d9d9",
       ignoreFocusOut: true,
       validateInput: (value) =>
         UUID_PATTERN.test(value) ? "" : "Unexpected API Key format",
