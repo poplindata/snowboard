@@ -9,11 +9,12 @@ import JsonSchemaFaker from 'json-schema-faker';
 import faker from '@faker-js/faker';
 import fetch from 'isomorphic-fetch';
 
+
 function makeIgluURI(path: string) {
 	// make Iglu uri from local file path
 	const [version, format, name, vendor] = path.split('/').reverse();
-	let uri = `iglu:${vendor}/${name}/${format}/${version}`
-	return uri;
+	return `iglu:${vendor}/${name}/${format}/${version}`;
+
 }
 
 // this method is called when your extension is activated
@@ -268,7 +269,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 	context.subscriptions.push(vscode.languages.registerDocumentDropEditProvider(selector, new ReverseTextOnDropProvider()));
-	context.subscriptions.push();
 
 }
 
@@ -298,9 +298,7 @@ class ReverseTextOnDropProvider implements vscode.DocumentDropEditProvider {
 		const x = makeIgluURI(text);
 		const [vendor, event, format, version] = x.replace('iglu:', '').split('/');
 		const [model, revision, addition] = version.split('-');
-		const dropFilePath = _document.uri.fsPath;
-		
-		console.log('hi:', x, dropFilePath, 'lang:', _document.languageId, 'pos:', position);
+		const dropFilePath = _document.uri.fsPath;	
 
 		var snip: string = '';
 		if (_document.languageId === 'javascript'){
@@ -415,6 +413,10 @@ tracker:track_self_describing_event(
 			vscode.window.showInformationMessage(`Unable to generate snippet code for language: ${_document.languageId}`);
 		}
 		
+		// lookup the appropriate snippet
+
+
+
 		// languageId should probably be .js or .ts or something
 		// and based on this languageId we should select the snippet that we are
 		// interested in!
