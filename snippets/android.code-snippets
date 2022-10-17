@@ -1,21 +1,21 @@
 {
     "Initialise collector": {
         "scope": "kotlin,java",
-        "prefix": "initCol",
+        "prefix": "initCollector",
         "body": [
             "TrackerController tracker = Snowplow.createTracker(context, \"${1:appTracker}\", ${2:com.collector}, HttpMethod.POST);"
         ]
     },
     "Send structured event": {
         "scope": "kotlin,java",
-        "prefix": "sendEvent",
+        "prefix": "sendStructuredEvent",
         "body": [
             "Event event = new Structured(\"${1:category}\", \"${2:action}\"); tracker.track(event);"
         ]
     },
     "Send self-describing JSON": {
         "scope": "kotlin,java",
-        "prefix": "sendJSON",
+        "prefix": "sendSelfDescribingEvent",
         "body": [
             "SelfDescribingJson sdj = new SelfDescribingJson(\"${3:iglu:com.example/example/jsonschema/1-0-0}\", attributes);",
             "SelfDescribing event = new SelfDescribing(sdj);",
@@ -36,7 +36,8 @@
         "scope": "kotlin,java",
         "prefix": "screenView",
         "body": [
-            "ScreenView event = new ScreenView(\"screen\", UUID.<em>randomUUID</em>().toString()); tracker.track(event); TODO"
+            "ScreenView event = new ScreenView(\"screen\", UUID.randomUUID().toString());",
+            "tracker.track(event);"
         ]
     },
     "Consent granted": {
@@ -56,21 +57,6 @@
             "ConsentWithdrawn event = new ConsentWithdrawn(true, \"${1:document_id}\", \"${2:document_version}\")",
             "        .documentDescription(\"${3:doc description}\")",
             "        .documentName(\"${4:doc name}\");",
-            "tracker.track(event);"
-        ]
-    },
-    "Ecommerce": {
-        "scope": "kotlin,java",
-        "prefix": "ecommerce",
-        "body": [
-            "EcommerceTransactionItem item = new EcommerceTransactionItem(\"${1:sku}\", ${2:35.00}, ${3:1}) TODO: this is a mess",
-            "    .name(\"${4:Acme 1}\")",
-            "    .category(\"${5:Stuff}\")",
-            "    .currency(\"${6:USD}\");",
-            "List items = new LinkedList();",
-            "items.add(item);",
-            "EcommerceTransaction event = new EcommerceTransaction(\"${7:order-1}\", ${8:40.00}, items)",
-            "    .shipping(${9:5.00});",
             "tracker.track(event);"
         ]
     },

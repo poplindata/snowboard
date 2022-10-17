@@ -1,7 +1,7 @@
 {
     "Initialise collector": {
         "scope": "brightscript,brighterscript",
-        "prefix": "initCol",
+        "prefix": "initCollector",
         "body": [
             "m.global.snowplow.init = {",
             "    network: {",
@@ -12,14 +12,14 @@
     },
     "Send structured event": {
         "scope": "brightscript,brighterscript",
-        "prefix": "sendEvent",
+        "prefix": "sendStructuredEvent",
         "body": [
             "m.global.snowplow.structured = { se_ca: \"${1:category}\", se_ac: \"${2:action}\", se_pr: \"${3:property}\", se_va: ${4:1} }"
         ]
     },
     "Send self-describing JSON": {
         "scope": "brightscript,brighterscript",
-        "prefix": "sendJSON",
+        "prefix": "sendSelfDescribingEvent",
         "body": [
             "m.global.snowplow.selfDescribing = {",
             "    data: {",

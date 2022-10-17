@@ -1,7 +1,7 @@
 {
     "Initialise collector": {
         "scope": "php",
-        "prefix": "initCol",
+        "prefix": "initCollector",
         "body": [
             "$emitter = new SyncEmitter($${1:collector.com}-, \"https\", \"POST\", ${2:10}, ${3:false});",
             "$subject = new Subject();",
@@ -13,21 +13,37 @@
         "prefix": "setSubject",
         "body": [
             "$subject = new Subject();",
-            "$subject->setPlatform(\"${1:srv}\");"
+            "$subject->setPlatform(\"${1:srv}\");",
+            "$subject->setUserId(\"example\");"
         ]
     },
     "Send structured event": {
         "scope": "php",
-        "prefix": "sendEvent",
+        "prefix": "sendStructuredEvent",
         "body": [
-            "trackStructEvent($category, $action, $label = NULL, $property = NULL, $value = NULL, $context = NULL, $tstamp = NULL) TODO: this looks incorrect"
+            "trackStructEvent(\"${1:category}\", \"${2:action}\", $label = \"${3:label}\", $property = \"${4:property}\", $value = ${5:1.0});"
         ]
+    },
+    "Send self describing (unstruct) event": {
+        "scope": "php",
+        "prefix": "sendSelfDescribingEvent",
+        "body": [
+            "$tracker->trackUnstructEvent(",
+            "   array(",
+            "       \"schema\": \"com.acme/example/jsonschema/1-0-0\",",
+            "       \"data\" => array(",
+            "           \"example\" => \"123\"",
+            "       )",
+            "   )",
+            ");"
+        ]
+
     },
     "Screen view": {
         "scope": "php",
         "prefix": "screenView",
         "body": [
-            "trackScreenView($name = NULL, $id = NULL, $context = NULL, $tstamp = NULL) TODO: this looks wrong"
+            "trackScreenView($name = \"${1:name}\", \"$id = ${2:uuid}\")"
         ]
     }
 }

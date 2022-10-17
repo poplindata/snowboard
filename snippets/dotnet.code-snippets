@@ -1,7 +1,7 @@
 {
     "Initialise collector": {
         "scope": "csharp",
-        "prefix": "initCol",
+        "prefix": "initCollector",
         "body": [
             "SnowplowHttpCollectorEndpoint endpoint = new SnowplowHttpCollectorEndpoint(\"${1:com.collector}\", protocol: HttpProtocol.HTTPS, method: HttpMethod.POST, l: logger);"
         ]
@@ -16,7 +16,7 @@
     },
     "Send structured event": {
         "scope": "csharp",
-        "prefix": "sendEvent",
+        "prefix": "sendStructuredEvent",
         "body": [
             "t1.Track(new Structured()",
             "    .SetCategory(\"${1:category}\")",
@@ -29,7 +29,7 @@
     },
     "Send self-describing JSON": {
         "scope": "csharp",
-        "prefix": "sendJSON",
+        "prefix": "sendSelfDescribingEvent",
         "body": [
             "// Data as a Dictionary",
             "Dictionary<string, object> data = new Dictionary<string, object>();",

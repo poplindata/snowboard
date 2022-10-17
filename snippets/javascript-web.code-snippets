@@ -1,7 +1,7 @@
 {
     "Initialise collector": {
         "scope": "javascript,typescript",
-        "prefix": "initCol",
+        "prefix": "initCollector",
         "body": [
             "newTracker('${1:sp}', '${2:collector.com}', {",
             "  appId: '${3:app_id}',",
@@ -17,12 +17,12 @@
         "scope": "javascript,typescript",
         "prefix": "setSubject",
         "body": [
-            "TODO: this all looks wrong?"
+            "t.setUserId(\"${1:123}\")"
         ]
     },
     "Send structured event": {
         "scope": "javascript,typescript",
-        "prefix": "sendEvent",
+        "prefix": "sendStructuredEvent",
         "body": [
             "trackStructEvent({",
             "  category: '${1:category}',",
@@ -35,11 +35,11 @@
     },
     "Send self-describing JSON": {
         "scope": "javascript,typescript",
-        "prefix": "sendJSON",
+        "prefix": "sendSelfDescribingEvent",
         "body": [
             "trackSelfDescribingEvent({",
             "  event: {",
-            "    schema: '${1:iglu:com.example/example/jsonschema/1-0-0}',",
+            "    schema: '${1:iglu:com.acme/example/jsonschema/1-0-0}',",
             "    data: {",
             "        productId: '${2:ASO01043}',",
             "    }",
@@ -51,7 +51,11 @@
         "scope": "javascript,typescript",
         "prefix": "consentGranted",
         "body": [
-            "TODO: this is wrong"
+            "trackConsentGranted({",
+            "  id: \"${1:document_id}\"",
+            "  version: \"{2:version}\"",
+            "  name: \"${3:document_name}\"",
+            "})"
         ]
     },
     "Consent withdrawn": {

@@ -10,6 +10,13 @@ import fetch from 'isomorphic-fetch';
 import { SchemasProvider } from './SchemasProvider';
 import { AuthenticationProvider, TextDocumentContentProvider } from './SnowplowConsole';
 
+function makeIgluURI(path: string) {
+	// make Iglu uri from local file path
+	const [version, format, name, vendor] = path.split('/').reverse();
+	return `iglu:${vendor}/${name}/${format}/${version}`;
+
+}
+
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
@@ -17,12 +24,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 
-	function makeIgluURI(path: string) {
-		// make Iglu uri from local file path
-		const [version, format, name, vendor] = path.split('/').reverse();
-		let uri = `iglu:${vendor}/${name}/${format}/${version}`
-		return uri;
-	}
+
 
 	async function listLocalSchemas(): Promise<string[]> {
 		// list local schemas
@@ -278,6 +280,175 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(newSchema);
 
+	const selector: vscode.DocumentSelector = { language: '*' };
+
+
+	context.subscriptions.push(vscode.languages.registerDocumentDropEditProvider(selector, new ReverseTextOnDropProvider()));
+
+}
+
+class ReverseTextOnDropProvider implements vscode.DocumentDropEditProvider {
+	async provideDocumentDropEdits(
+		_document: vscode.TextDocument,
+		position: vscode.Position,
+		dataTransfer: vscode.DataTransfer,
+		token: vscode.CancellationToken
+	): Promise<vscode.DocumentDropEdit | undefined> {
+		// Check the data transfer to see if we have some kind of text data
+		const dataTransferItem = dataTransfer.get('text') ?? dataTransfer.get('text/plain');
+		if (!dataTransferItem) {
+			return undefined;
+		}
+
+		const text = await dataTransferItem.asString();
+		if (token.isCancellationRequested) {
+			return undefined;
+		}
+
+		// try and read the file (do we need to?)
+
+		// Build a snippet to insert
+		const snippet = new vscode.SnippetString();
+		// Adding the reversed text
+		const x = makeIgluURI(text);
+		const [vendor, event, format, version] = x.replace('iglu:', '').split('/');
+		const [model, revision, addition] = version.split('-');
+		const dropFilePath = _document.uri.fsPath;	
+
+		var snip: string = '';
+		if (_document.languageId === 'javascript'){
+			snip += `
+trackSelfDescribingEvent({
+	event: {
+		schema: '${x}',
+		data: {}
+	}
+});`;
+		}
+		else if (_document.languageId === 'objective-c') {
+			console.log('hi inserting objc code');
+			snip += `
+let event = SelfDescribing(schema: "${x}", payload: []);
+tracker.track(event);
+			`;
+		}
+		else if (_document.languageId === 'java'){
+			// is there a more specific language for Android?
+			snip += 
+`SelfDescribingJson json = new SelfDescribingJson("${x}", data);
+SelfDescribing event = new SelfDescribing(json);
+`;		
+		}
+		else if (_document.languageId === 'csharp') {
+			snip += 
+`
+SelfDescribingJson json = new SelfDescribingJson(\"${x}\", data);
+`
+		}
+		else if (_document.languageId === 'php') {
+			// TODO: this needs a different schema version!
+			let phpSchema = `iglu:${vendor}/${event}/${format}/${model}.${revision}.${addition}`
+			snip +=
+`
+$tracker->trackUnstructEvent(
+    array(
+        "schema" => "${phpSchema}",
+        "data" => array(
+            
+        )
+    )
+);`
+		}
+		else if (_document.languageId === 'cpp'){
+			snip += 
+`
+SelfDescribingJson sdj("${x}", data);
+SelfDescribingEvent sde(sdj);
+Snowplow::get_default_tracker()->track(sde);
+`
+		}
+		else if (_document.languageId === 'ruby') {
+			snip +=
+`
+self_desc_json = SnowplowTracker::SelfDescribingJson.new(
+	"${x}",
+	{}
+)
+tracker.track_self_describing_event(self_desc_json)
+`
+		}
+		else if (_document.languageId === 'scala'){
+			// TODO: this needs to look different!
+			snip +=
+`
+val event = SelfDescribingJson(
+	SchemaKey(${vendor}, ${event}, ${format}, SchemaVer(${model},${revision},${addition})),
+	Json.obj()
+)
+tracker.trackSelfDescribingEvent(event)
+`
+		}
+		else if (_document.languageId === 'python') {
+			snip +=
+`
+tracker.track_self_describing_event(SelfDescribingJson(
+	"${x}",
+	{}
+))
+`
+		}
+		else if (_document.languageId === 'go') {
+			snip += 
+`
+sdj := sp.InitSelfDescribingJson("${x}", data)
+
+tracker.TrackSelfDescribingEvent(sp.SelfDescribingEvent{
+  Event: sdj,
+})
+`
+		}
+		else if (_document.languageId === 'dart') {
+			snip += 
+`
+tracker.track(SelfDescribing(
+    schema: '${x}',
+    data: {}
+));
+`
+		}
+		else if (_document.languageId === 'lua') {
+			snip +=
+`
+tracker:track_self_describing_event(
+	"${x}",
+	{ }
+)
+`		}
+		else {
+			vscode.window.showInformationMessage(`Unable to generate snippet code for language: ${_document.languageId}`);
+		}
+		
+		// lookup the appropriate snippet
+
+
+
+		// languageId should probably be .js or .ts or something
+		// and based on this languageId we should select the snippet that we are
+		// interested in!
+
+		// TODO: need to write sdjson snippets for each language
+		// TODO: how do we determine the destination file type / syntax?
+
+		// can we do smart insert based on line number
+		// and whether the object has been dragged
+		// into an existing event or not?
+		// we get a line and a character number
+		// but no surrounding text?
+		snippet.appendText([...snip].join(''));
+		// snippet.appendTabstop()
+
+		return { insertText: snippet };
+	}
 }
 
 // this method is called when your extension is deactivated

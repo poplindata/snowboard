@@ -1,7 +1,7 @@
 {
     "Send structured event": {
         "scope": "cpp",
-        "prefix": "sendEvent",
+        "prefix": "sendStructuredEvent",
         "body": [
             "int trackStructEvent(const char *aCategory,",
             "                     const char *aAction,",

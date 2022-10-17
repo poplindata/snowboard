@@ -1,7 +1,7 @@
 {
     "Initialise collector": {
         "scope": "cpp",
-        "prefix": "initCol",
+        "prefix": "initCollector",
         "body": [
             "auto tracker = Snowplow::create_tracker(",
             "    \"${1:namespace}\", // tracker namespace used to identify the tracker",
@@ -21,7 +21,7 @@
     },
     "Send structured event": {
         "scope": "cpp",
-        "prefix": "sendEvent",
+        "prefix": "sendStructuredEvent",
         "body": [
             "StructuredEvent se(\"${1:category}\", \"${2:action}\"); // constructor takes category and action",
             "se.property = \"${3:property}\";",
@@ -32,12 +32,11 @@
     },
     "Send self-describing JSON": {
         "scope": "cpp",
-        "prefix": "sendJSON",
+        "prefix": "sendSelfDescribingEvent",
         "body": [
-            "StructuredEvent se(\"${1:category}\", \"${2:action}\"); TODO: this looks incorrect",
-            "se.set_context(context);",
-            "",
-            "Snowplow::get_default_tracker()->track(se);"
+            "SelfDescribingJson sdj(\"iglu:com.acme/example/jsonschema/1-0-0\", data);",
+            "SelfDescribingEvent sde(sdj);",
+            "Snowplow::get_default_tracker()->track(sde);"
         ]
     },
     "Timing": {

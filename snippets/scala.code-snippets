@@ -1,31 +1,10 @@
 {
     "Initialise collector": {
         "scope": "scala",
-        "prefix": "initCol",
+        "prefix": "initCollector",
         "body": [
-            "TODO: this looks completely wrong",
-            "import org.http4s.client.blaze.BlazeClientBuilder",
-            "import com.snowplowanalytics.snowplow.scalatracker.Tracker",
-            "import com.snowplowanalytics.snowplow.scalatracker.Emitter.EndpointParams",
-            "import com.snowplowanalytics.snowplow.scalatracker.emitters.http4s.Http4sEmitter",
-            "import scala.concurrent.ExecutionContext",
-            "import cats.data.NonEmptyList",
-            "import cats.implicits._",
-            "import cats.effect.{ContextShift, IO, Timer}",
-            "",
-            "implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)",
-            "implicit val timer: Timer[IO]     = IO.timer(ExecutionContext.global)",
-            "",
-            "val resource = for {",
-            "  client   <- BlazeClientBuilder[IO](ExecutionContext.global).resource",
-            "  emitter1 <- Http4sEmitter.build[IO](EndpointParams(\"${1:mycollector.com}\"), client)",
-            "  emitter2 <- Http4sEmitter.build[IO](EndpointParams(\"${2:myothercollector.com}\", port = Some(${3:8080})), client)",
-            "} yield new Tracker(NonEmptyList.of(emitter1, emitter2), \"${4:mytrackername}\", \"${5:myapplicationid}\")",
-            "",
-            "resource.use { tracker =>",
-            "  // Use the tracker inside this block to initialize and run your application",
-            "  MyApp.run(tracker)",
-            "}"
+            "val emitter = AsyncEmitter.createAndStart(EndpointParams(\"collector.acme.com\"))",            
+            "val tracker = new Tracker(emitter, \"${1:tracker_name}\", \"${2:app_id}\")"
         ]
     },
     "Set subject": {
@@ -34,20 +13,19 @@
         "body": [
             "val subject = new Subject()",
             "  .setUserId(\"${1:user-123}\")",
-            "  .setPlatform(${2:Desktop})"
+            "  .setPlatform(${2:srv})"
         ]
     },
     "Send structured event": {
         "scope": "scala",
-        "prefix": "sendEvent",
+        "prefix": "sendStructuredEvent",
         "body": [
-            "TODO: this is not! a structured event, check value",
-            "t.trackStructEvent(\"${1:category}\", \"${2:action}\", property=Some(\"${3:property}\"), ${4})"
+            "t.trackStructEvent(\"${1:category}\", \"${2:action}\", property=Some(\"${3:property}\"), ${4:value})"
         ]
     },
     "Send self-describing JSON": {
         "scope": "scala",
-        "prefix": "sendJSON",
+        "prefix": "sendSelfDescribingEvent",
         "body": [
             "val productViewEvent = SelfDescribingJson(",
             "  SchemaKey(\"${1:com.example}\", \"${2:example}\", \"jsonschema\", SchemaVer(${4:1,0,0})),",

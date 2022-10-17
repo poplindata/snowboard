@@ -1,25 +1,32 @@
 {
+    "Initialise collector": {
+        "scope": "python",
+        "prefix": "initCollector",
+        "body": [
+            "e = Emitter(\"collector.acme.com\")",
+            "t = Tracker(e)"
+        ]
+    },
     "Set subject": {
         "scope": "python",
         "prefix": "setSubject",
         "body": [
-            "from snowplow_tracker import Subject",
-            "s = Subject() TODO: better example"
+            "s = Subject().set_user_id(\"${1:user_id}\")"
         ]
     },
     "Send structured event": {
         "scope": "python",
-        "prefix": "sendEvent",
+        "prefix": "sendStructuredEvent",
         "body": [
             "t.track_struct_event(\"${1:category}\", \"${2:action}\", ${3:label}, \"${4:property}\", ${5:1})"
         ]
     },
     "Send self-describing JSON": {
         "scope": "python",
-        "prefix": "sendJSON",
+        "prefix": "sendSelfDescribingEvent",
         "body": [
             "t.track_self_describing_event(SelfDescribingJson(",
-            "  \"${1:iglu:com.example/example/jsonschema/1-0-0}\",",
+            "  \"${1:iglu:com.acme/example/jsonschema/1-0-0}\",",
             "  {",
             "    \"value\": \"${2:123}\",",
             "  }",

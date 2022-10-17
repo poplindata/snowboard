@@ -1,0 +1,34 @@
+{
+    "Initialise collector": {
+        "scope": "ruby",
+        "prefix": "initCollector",
+        "body": [
+            "emitter = SnowplowTracker::Emitter.new(endpoint: '${1:collector.example.com}')",
+            "tracker = SnowplowTracker::Tracker.new(emitters: emitter)"
+        ]
+    },
+    "Send structured event": {
+        "scope": "ruby",
+        "prefix": "sendStructuredEvent",
+        "body": [
+            "tracker.track_struct_event(category: '${1:category}',",
+            "   action: '${2:action}'",
+            "   property: '${3:property}'",
+            "   value: ${4:1.0}",
+            ")"
+        ]
+    },
+    "Send self-describing JSON": {
+        "scope": "ruby",
+        "prefix": "sendSelfDescribingEvent",
+        "body": [
+            "self_desc_json = SnowplowTracker::SelfDescribingJson.new(",
+            "   \"iglu:com.acme/example/jsonschema/1-0-0",
+            "   {",
+            "       \"value\": 123\"",
+            "   }",
+            ")",
+            "tracker.track_self_describing_event(event_json: self_desc_json)"
+        ]
+    }
+}
