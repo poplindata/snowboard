@@ -1,7 +1,7 @@
 {
     "Initialise collector": {
         "scope": "java",
-        "prefix": "initCol",
+        "prefix": "initCollector",
         "body": [
             "BatchEmitter emitter = BatchEmitter.builder()",
             "        .url(\"${1:http://collector.com}\")",
@@ -22,7 +22,7 @@
     },
     "Send structured event": {
         "scope": "java",
-        "prefix": "sendEvent",
+        "prefix": "sendStructuredEvent",
         "body": [
             "Structured structured = Structured.builder()",
             "                .category(\"${1:category}\")",
@@ -35,7 +35,7 @@
     },
     "Send self-describing JSON": {
         "scope": "java",
-        "prefix": "sendJSON",
+        "prefix": "sendSelfDescribingEvent",
         "body": [
             "// This map will be used for the \"data\" key",
             "Map<String, String> eventData = new HashMap<>();",
@@ -72,7 +72,7 @@
         "scope": "java",
         "prefix": "ecommerce",
         "body": [
-            ".price(${1:1.0}) TODO: check this",
+            ".price(${1:1.0})",
             "        .quantity(${2:2})",
             "        .name(\"${3:item name}\")",
             "        .category(\"${4:category}\")",

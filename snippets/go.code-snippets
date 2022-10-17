@@ -1,7 +1,7 @@
 {
     "Initialise collector": {
         "scope": "go",
-        "prefix": "initCol",
+        "prefix": "initCollector",
         "body": [
             "emitter := sp.InitEmitter(sp.RequireCollectorUri(\"${1:com.collector}\"))",
             "tracker := sp.InitTracker(sp.RequireEmitter(emitter))"
@@ -11,12 +11,13 @@
         "scope": "go",
         "prefix": "setSubject",
         "body": [
-            "subject := sp.InitSubject() TODO: needs more detail"
+            "subject := sp.InitSubject()",
+            "subject.SetUserId(\"${1:123}\")"
         ]
     },
     "Send structured event": {
         "scope": "go",
-        "prefix": "sendEvent",
+        "prefix": "sendStructuredEvent",
         "body": [
             "tracker.TrackStructEvent(sp.StructuredEvent{",
             "  Category: sp.NewString(\"${1:category}\"),",
@@ -28,7 +29,7 @@
     },
     "Send self-describing JSON": {
         "scope": "go",
-        "prefix": "sendJSON",
+        "prefix": "sendSelfDescribingEvent",
         "body": [
             "// Create a new SelfDescribingJson",
             "sdj := sp.InitSelfDescribingJson(\"${4:iglu:com.example/example/jsonschema/1-0-0}\", data)",
@@ -62,7 +63,7 @@
         "scope": "go",
         "prefix": "ecommerce",
         "body": [
-            "items := []sp.EcommerceTransactionItemEvent{ TODO: check this",
+            "items := []sp.EcommerceTransactionItemEvent{",
             "  sp.EcommerceTransactionItemEvent{",
             "    Sku: sp.NewString(\"${1:pbz0026}\"),",
             "    Price: sp.NewFloat64(${2:20}),",

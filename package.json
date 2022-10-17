@@ -70,6 +70,9 @@
         "path": "./snippets/roku.code-snippets"
       },
       {
+        "path": "./snippets/rust.code-snippets"
+      },
+      {
         "path": "./snippets/ruby.code-snippets"
       },
       {

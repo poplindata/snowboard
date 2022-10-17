@@ -1,25 +1,25 @@
 {
     "Initialise collector": {
         "scope": "swift,objectivec",
-        "prefix": "initCol",
+        "prefix": "initCollector",
         "body": [
             "let tracker = Snowplow.createTracker(namespace: \"${1:namespace}\", endpoint: ${2:com.collector}, method: .post)"
         ]
     },
     "Send structured event": {
         "scope": "swift,objectivec",
-        "prefix": "sendEvent",
+        "prefix": "sendStructuredEvent",
         "body": [
-            "let event = Structured(category: \"${1:category}\", action: \"${2:action}\")",
-            "tracker.track(event) TODO: needs label etc"
+            "let event = Structured(category: \"${1:category}\", action: \"${2:action}\", label: \"${3:label}\")",
+            "tracker.track(event)"
         ]
     },
     "Send self-describing JSON": {
         "scope": "swift,objectivec",
-        "prefix": "sendJSON",
+        "prefix": "sendSelfDescribingEvent",
         "body": [
             "let data = [\"a\": \"b\" as NSObject];",
-            "let event = SelfDescribing(schema: \"${3:iglu:com.example/example/jsonschema/1-0-0}\", payload: data)",
+            "let event = SelfDescribing(schema: \"${3:iglu:com.acme/example/jsonschema/1-0-0}\", payload: data)",
             "tracker.track(event)"
         ]
     },
@@ -69,7 +69,7 @@
         "scope": "swift,objectivec",
         "prefix": "ecommerce",
         "body": [
-            "let transactionID = \"${1:6a8078be}\"       TODO: check this",
+            "let transactionID = \"${1:6a8078be}\"",
             "                ",
             "let itemArray = [       ",
             "  EcommerceItem(sku: \"${2:DemoItemSku}\", price: ${3:0.75}, quantity: ${4:1})",

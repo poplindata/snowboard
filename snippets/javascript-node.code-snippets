@@ -1,7 +1,7 @@
 {
     "Send structured event": {
         "scope": "javascript,typescript",
-        "prefix": "sendEvent",
+        "prefix": "sendStructuredEvent",
         "body": [
             "t.track(buildStructEvent({",
             "  category: \"${1:category}\", ",
@@ -14,11 +14,11 @@
     },
     "Send self-describing JSON": {
         "scope": "javascript,typescript",
-        "prefix": "sendJSON",
+        "prefix": "sendSelfDescribingEvent",
         "body": [
             "t.track(buildSelfDescribingEvent({",
             "  event: {",
-            "    schema: \"${1:iglu:com.example/example/jsonschema/1-0-0}\",",
+            "    schema: \"${1:iglu:com.acme/example/jsonschema/1-0-0}\",",
             "    data: {",
             "      save_id: \"${2:4321}\",",
             "    }",

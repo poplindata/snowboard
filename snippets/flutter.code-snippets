@@ -1,21 +1,21 @@
 {
     "Initialise collector": {
         "scope": "dart",
-        "prefix": "initCol",
+        "prefix": "initCollector",
         "body": [
             "SnowplowTracker tracker = await Snowplow.createTracker( namespace: '${1:namespace}', endpoint: '${2:http://collector.com}' );"
         ]
     },
     "Send structured event": {
         "scope": "dart",
-        "prefix": "sendEvent",
+        "prefix": "sendStructuredEvent",
         "body": [
             "tracker.track(Structured( category: '${1:category}', action: '${2:action}', label: '${3:label}', property: '${4:property}', value: ${5:123}, ));"
         ]
     },
     "Send self-describing JSON": {
         "scope": "dart",
-        "prefix": "sendJSON",
+        "prefix": "sendSelfDescribingEvent",
         "body": [
             "tracker.track(SelfDescribing( schema: '${1:iglu:com.example/example/jsonschema/1-0-0}', data: {  } ));"
         ]

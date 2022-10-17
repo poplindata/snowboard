@@ -1,9 +1,9 @@
 {
     "Initialise collector": {
         "scope": "javascript,typescript,javascriptreact,typescriptreact",
-        "prefix": "initCol",
+        "prefix": "initCollector",
         "body": [
-            "const tracker = createTracker( TODO: namespace?",
+            "const tracker = createTracker(",
             "    '${1:appTracker}',",
             "    {",
             "      endpoint: ${2:collector.com},",
@@ -23,7 +23,7 @@
     },
     "Send structured event": {
         "scope": "javascript,typescript,javascriptreact,typescriptreact",
-        "prefix": "sendEvent",
+        "prefix": "sendStructuredEvent",
         "body": [
             "tracker.trackStructuredEvent({",
             "  category: '${1:category}',",
@@ -36,7 +36,7 @@
     },
     "Send self-describing JSON": {
         "scope": "javascript,typescript,javascriptreact,typescriptreact",
-        "prefix": "sendJSON",
+        "prefix": "sendSelfDescribingEvent",
         "body": [
             "tracker.trackSelfDescribingEvent({",
             "    schema: '${1:iglu:com.snowplowanalytics.snowplow/link_click/jsonschema/1-0-1}',",
