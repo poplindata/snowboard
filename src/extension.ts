@@ -3,12 +3,12 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { ThemeColor } from "vscode";
-import common = require('mocha/lib/interfaces/common');
 import JsonSchemaFaker from 'json-schema-faker';
 import faker from '@faker-js/faker';
 import fetch from 'isomorphic-fetch';
 
+import { SchemasProvider } from './SchemasProvider';
+import { AuthenticationProvider, TextDocumentContentProvider } from './SnowplowConsole';
 
 function makeIgluURI(path: string) {
 	// make Iglu uri from local file path
@@ -20,7 +20,7 @@ function makeIgluURI(path: string) {
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-	
+
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 
@@ -260,6 +260,21 @@ export function activate(context: vscode.ExtensionContext) {
 			];
 		}
 	});
+
+	const consoleAP = new AuthenticationProvider(context);
+
+	context.subscriptions.push(consoleAP);
+	context.subscriptions.push(
+		vscode.workspace.registerTextDocumentContentProvider(
+			TextDocumentContentProvider.scheme,
+			new TextDocumentContentProvider(consoleAP),
+		)
+	);
+	context.subscriptions.push(
+		vscode.window.createTreeView("schemas", {
+			treeDataProvider: new SchemasProvider(consoleAP),
+		})
+	);
 
 	context.subscriptions.push(igluProvider);
 
