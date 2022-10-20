@@ -6,7 +6,7 @@ import fetch from "isomorphic-fetch";
 import {
   AuthenticationProvider,
   TextDocumentContentProvider,
-} from "./SnowplowConsole";
+} from "../SnowplowConsole";
 
 type DataStructureResource = {
   organizationId: string;

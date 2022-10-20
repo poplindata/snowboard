@@ -7,7 +7,7 @@ import JsonSchemaFaker from 'json-schema-faker';
 import faker from '@faker-js/faker';
 import fetch from 'isomorphic-fetch';
 
-import { SchemasProvider } from './SchemasProvider';
+import { EnvironmentsProvider, SchemasProvider } from './TreeViews';
 import { AuthenticationProvider, TextDocumentContentProvider } from './SnowplowConsole';
 
 function makeIgluURI(path: string) {
@@ -152,7 +152,7 @@ export function activate(context: vscode.ExtensionContext) {
 			} else {
 				vscode.window.showInformationMessage('no editor');
 			}
-		});		
+		});
 	}
 
 	function createNewSchema(component: string) {
@@ -273,7 +273,10 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.window.createTreeView("schemas", {
 			treeDataProvider: new SchemasProvider(consoleAP),
-		})
+		}),
+		vscode.window.createTreeView("environments", {
+			treeDataProvider: new EnvironmentsProvider(consoleAP),
+		}),
 	);
 
 	context.subscriptions.push(igluProvider);

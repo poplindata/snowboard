@@ -25,7 +25,7 @@ export class TextDocumentContentProvider
         organizationId
       );
       return JSON.stringify(schema, null, 2);
-    } else {
+    } else if (uri.path) {
       const [_, vendor, name, format, version] = uri.path.split("/");
       const staticUri = vscode.Uri.joinPath(
         vscode.Uri.parse(uri.fragment),
@@ -39,6 +39,14 @@ export class TextDocumentContentProvider
         r.ok ? r.json() : Promise.reject(r)
       );
       return JSON.stringify(schema, null, 2);
+    } else if (uri.fragment) {
+      return JSON.stringify(
+        JSON.parse(decodeURIComponent(uri.fragment)),
+        null,
+        2
+      );
     }
+
+    return "";
   }
 }
