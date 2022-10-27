@@ -450,7 +450,11 @@ tracker:track_self_describing_event(
 		snippet.appendText([...snip].join(''));
 		// snippet.appendTabstop()
 
-		return { insertText: snippet };
+		// none of the "official" return values from provideDocumentDropEdits treat snippets properly
+		// instead we use insertSnippet to actually get decent indentation & tabstop behavior
+		if (_document === vscode.window.activeTextEditor?.document && snippet.value) {
+			return vscode.window.activeTextEditor.insertSnippet(snippet, position).then((success) => success ? {insertText: ""} : undefined);
+		}
 	}
 }
 
