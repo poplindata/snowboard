@@ -1,5 +1,6 @@
 {
   "name": "snowboard",
+  "publisher": "com.poplindata",
   "displayName": "snowboard",
   "description": "",
   "version": "0.0.1",
@@ -11,7 +12,6 @@
     "Snippets"
   ],
   "activationEvents": [
-    "onCommand:snowboard.helloWorld",
     "onCommand:snowboard.openMicro",
     "onCommand:snowboard.newSchema",
     "onCommand:snowboard.openMicroDebugger",
@@ -141,10 +141,6 @@
         "title": "Generate fake event"
       },
       {
-        "command": "snowboard.helloWorld",
-        "title": "Hello World"
-      },
-      {
         "command": "snowboard.openMicro",
         "title": "Open Micro (all)"
       },
@@ -167,29 +163,6 @@
       {
         "command": "snowboard.openMicroDebugger",
         "title": "Open debugger (micro)"
-      },
-      {
-        "command": "schemas.editEntry",
-        "title": "Edit",
-        "icon": {
-          "light": "media/dep.svg",
-          "dark": "media/dep.svg"
-        }
-      },
-      {
-        "command": "enrichments.editEnrichment",
-        "title": "Edit Enrichment",
-        "icon": "$(edit)"
-      },
-      {
-        "command": "environments.addEnvironment",
-        "title": "Add",
-        "icon": "$(settings-add)"
-      },
-      {
-        "command": "environments.refreshEnvironments",
-        "title": "Refresh",
-        "icon": "$(refresh)"
       }
     ],
     "configuration": {
@@ -255,14 +228,6 @@
         {
           "id": "schemas",
           "name": "Schemas"
-        },
-        {
-          "id": "enrichments",
-          "name": "Enrichments"
-        },
-        {
-          "id": "targets",
-          "name": "Targets"
         }
       ]
     },
@@ -272,27 +237,6 @@
           "id": "snowplow",
           "title": "Snowplow",
           "icon": "media/dep.svg"
-        }
-      ]
-    },
-    "menus": {
-      "view/title": [
-        {
-          "command": "environments.addEnvironment",
-          "when": "view == environments",
-          "group": "navigation"
-        },
-        {
-          "command": "environments.refreshEnvironments",
-          "when": "view == environments",
-          "group": "navigation"
-        }
-      ],
-      "view/item/context": [
-        {
-          "command": "schemas.editEntry",
-          "when": "view == schemas && viewItem == schema",
-          "group": "inline"
         }
       ]
     },
