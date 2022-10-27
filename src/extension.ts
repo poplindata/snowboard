@@ -9,6 +9,7 @@ import fetch from 'isomorphic-fetch';
 
 import { EnvironmentsProvider, SchemasProvider } from './TreeViews';
 import { AuthenticationProvider, TextDocumentContentProvider } from './SnowplowConsole';
+import { SnippetService } from './SnippetService';
 
 function makeIgluURI(path: string) {
 	// make Iglu uri from local file path
@@ -17,6 +18,8 @@ function makeIgluURI(path: string) {
 
 }
 
+let snippetService: SnippetService | undefined = undefined;
+
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
@@ -24,7 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 
-
+	snippetService = new SnippetService(context.extension.extensionPath, context.extension.packageJSON);
 
 	async function listLocalSchemas(): Promise<string[]> {
 		// list local schemas
@@ -311,12 +314,21 @@ class ReverseTextOnDropProvider implements vscode.DocumentDropEditProvider {
 		// try and read the file (do we need to?)
 
 		// Build a snippet to insert
-		const snippet = new vscode.SnippetString();
+		let snippet = new vscode.SnippetString();
 		// Adding the reversed text
 		const x = makeIgluURI(text);
 		const [vendor, event, format, version] = x.replace('iglu:', '').split('/');
 		const [model, revision, addition] = version.split('-');
-		const dropFilePath = _document.uri.fsPath;	
+		const dropFilePath = _document.uri.fsPath;
+
+		if (snippetService) {
+			const predefined = snippetService.getSnippets(_document.languageId, "Send self-describing JSON");
+			if (predefined && predefined.length == 1) snippet = snippetService.evaluate(predefined[0], {
+				vendor, event, format, version, uri: x, model, revision, addition,
+				"iglu:com.example/example/jsonschema/1-0-0": x,
+				"iglu:com.acme/example/jsonschema/1-0-0": x,
+			});
+		}
 
 		var snip: string = '';
 		if (_document.languageId === 'javascript'){
@@ -447,7 +459,7 @@ tracker:track_self_describing_event(
 		// into an existing event or not?
 		// we get a line and a character number
 		// but no surrounding text?
-		snippet.appendText([...snip].join(''));
+		if (!snippet.value && snip) snippet.appendText([...snip].join(''));
 		// snippet.appendTabstop()
 
 		// none of the "official" return values from provideDocumentDropEdits treat snippets properly
