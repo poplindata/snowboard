@@ -30,7 +30,7 @@
         "body": [
             "\\$tracker->trackUnstructEvent(",
             "\tarray(",
-            "\t\t\"schema\": \"iglu:com.example/example/jsonschema/1-0-0\",",
+            "\t\t\"schema\": \"${1:iglu:com.example/example/jsonschema/1-0-0}\",",
             "\t\t\"data\" => array(",
             "\t\t\t\"example\" => \"123\"",
             "\t\t)",
