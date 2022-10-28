@@ -29,23 +29,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 	snippetService = new SnippetService(context.extension.extensionPath, context.extension.packageJSON);
 
-	async function listLocalSchemas(): Promise<string[]> {
-		// list local schemas
-		const wsedit = new vscode.WorkspaceEdit();
-		if (!vscode.workspace.workspaceFolders) {
-			vscode.window.showInformationMessage("A folder or workspace must be opened to use this command.");
-			return [];
-		}
-
-		let workspaceFolderPath: string = vscode.workspace.workspaceFolders[0].uri.path;
-
-		const resources = await vscode.workspace.findFiles('schemas/*/*/*/*');
-		const schemas = await Promise.all(resources.map(file => makeIgluURI(file.path)));
-
-		return schemas;
-
-	}
-
 	async function fetchIgluCentralSchemas(): Promise<string[]>{
 		// fetch the manifest file for Iglu Central
 		let schemas = fetch(
@@ -232,10 +215,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// get Iglu schemas
 	let igluUris: string[] = [];
-
-	// let remoteSchemas = fetchIgluCentralSchemas().then(function(x) {console.log('schemas:', x)});
-	let localSchemas = listLocalSchemas().then(x => igluUris.concat(x));
-	console.log('schemas length:', igluUris);
 
 	const igluProvider = vscode.languages.registerCompletionItemProvider('*', {
 
