@@ -53,57 +53,109 @@ type SchemaProviderElement =
     };
 
 export class SchemasProvider
-  implements vscode.TreeDataProvider<SchemaProviderElement>
+  implements vscode.TreeDataProvider<string>, vscode.Disposable
 {
   private static readonly _schemas: Map<string, DataStructureResource> =
     new Map();
 
-  private _onDidChangeTreeData = new vscode.EventEmitter<void>();
+  private static readonly elementCache: Map<string, SchemaProviderElement> =
+    new Map();
+
+  private _onDidChangeTreeData = new vscode.EventEmitter<string | void>();
+  private _disposable: vscode.Disposable;
 
   constructor(private readonly provider: AuthenticationProvider) {
-    this.provider.onDidChangeSessions(() => this._onDidChangeTreeData.fire());
+    this._disposable = vscode.Disposable.from(
+      this.provider.onDidChangeSessions(() => this._onDidChangeTreeData.fire()),
+    );
+  }
+
+  public dispose() {
+    this._disposable.dispose();
   }
 
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
-  getTreeItem(element: SchemaProviderElement): vscode.TreeItem {
+  private idForElement(element: SchemaProviderElement): string {
+    let id: string;
+    switch (element.kind) {
+      case "static":
+        id = [element.kind, element.baseUrl].join(".");
+        break;
+      case "organization":
+        id = [element.kind, element.organizationId].join(".");
+        break;
+      case "vendor":
+        id = [element.kind, element.organizationId, element.vendor].join(".");
+        break;
+      case "name":
+        id = [
+          element.kind,
+          element.organizationId,
+          element.vendor,
+          element.name,
+        ].join(".");
+        break;
+      case "format":
+        id = [
+          element.kind,
+          element.organizationId,
+          element.vendor,
+          element.name,
+          element.format,
+        ].join(".");
+        break;
+      case "version":
+        id = [
+          element.kind,
+          element.organizationId,
+          element.contentHash || [element.vendor, element.name].join("."),
+          element.version,
+          element.env,
+        ].join(".");
+        break;
+    }
+
+    if (!SchemasProvider.elementCache.has(id))
+      SchemasProvider.elementCache.set(id, element);
+    return id;
+  }
+
+  getTreeItem(elementId: string): vscode.TreeItem {
+    const element = SchemasProvider.elementCache.get(elementId)!;
+
     const { Collapsed, Expanded, None } = vscode.TreeItemCollapsibleState;
     const buildTI = (props: Partial<vscode.TreeItem>) =>
-      Object.assign(new vscode.TreeItem("", Expanded), props);
+      Object.assign(
+        new vscode.TreeItem("", Expanded),
+        { id: this.idForElement(element) },
+        props
+      );
+
     switch (element.kind) {
       case "static":
         return buildTI({
           label: element.repoName,
           description: element.baseUrl,
-          id: [element.baseUrl].join("."),
         });
       case "organization":
         return buildTI({
           label: element.organization,
           description: element.organizationId,
-          id: [element.organizationId].join("."),
         });
       case "vendor":
         return buildTI({
           label: element.vendor,
           collapsibleState: Collapsed,
-          id: [element.organizationId, element.vendor].join("."),
         });
       case "name":
         return buildTI({
           label: element.name,
           collapsibleState: Collapsed,
-          id: [element.organizationId, element.vendor, element.name].join("."),
         });
       case "format":
         return buildTI({
           label: element.format,
-          id: [
-            element.organizationId,
-            element.vendor,
-            element.name,
-            element.format,
-          ].join("."),
         });
       case "version":
         const igluUri = `iglu:${element.vendor}/${element.name}/${element.format}/${element.version}`;
@@ -147,24 +199,17 @@ export class SchemasProvider
           label: element.version,
           collapsibleState: None,
           description: `${element.schemaType || "schema"} | ${element.env}`,
-          id: [
-            element.organizationId,
-            element.contentHash || [element.vendor, element.name].join("."),
-            element.version,
-            element.env,
-          ].join("."),
           command,
         });
     }
   }
 
-  async getChildren(
-    element?: SchemaProviderElement
-  ): Promise<SchemaProviderElement[]> {
-    if (!element) {
-      return this.getRootChildren();
+  async getChildren(elementId?: string): Promise<string[]> {
+    if (!elementId) {
+      return (await this.getRootChildren()).map(this.idForElement);
     } else {
-      return this.getNodeChildren(element);
+      const element = SchemasProvider.elementCache.get(elementId)!;
+      return (await this.getNodeChildren(element)).map(this.idForElement);
     }
   }
 
@@ -219,7 +264,7 @@ export class SchemasProvider
         return this.getNameNodeChildren(element);
       case "format":
         return this.getFormatNodeChildren(element);
-      default:
+      case "version":
         return [];
     }
   }
