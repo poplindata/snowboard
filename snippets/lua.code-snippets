@@ -24,7 +24,7 @@
             ")"
         ]
     },
-    "Screen view (apps only)": {
+    "Screen view": {
         "scope": "lua",
         "prefix": "screenView",
         "body": [

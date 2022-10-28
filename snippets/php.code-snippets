@@ -24,7 +24,7 @@
             "trackStructEvent(\"${1:category}\", \"${2:action}\", $label = \"${3:label}\", $property = \"${4:property}\", $value = ${5:1.0});"
         ]
     },
-    "Send self describing (unstruct) event": {
+    "Send self-describing JSON": {
         "scope": "php",
         "prefix": "sendSelfDescribingEvent",
         "body": [

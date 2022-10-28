@@ -29,7 +29,7 @@
             "}"
         ]
     },
-    "Screen view (apps only)": {
+    "Screen view": {
         "scope": "brightscript,brighterscript",
         "prefix": "screenView",
         "body": [

@@ -32,7 +32,7 @@
             "tracker.track(event);"
         ]
     },
-    "Screen view (apps only)": {
+    "Screen view": {
         "scope": "kotlin,java",
         "prefix": "screenView",
         "body": [

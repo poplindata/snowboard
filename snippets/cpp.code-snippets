@@ -47,7 +47,7 @@
             "Snowplow::get_default_tracker()->track(te);"
         ]
     },
-    "Screen view (apps only)": {
+    "Screen view": {
         "scope": "cpp",
         "prefix": "screenView",
         "body": [
