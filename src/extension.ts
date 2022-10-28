@@ -18,8 +18,6 @@ function makeIgluURI(path: string) {
 
 }
 
-let snippetService: SnippetService | undefined = undefined;
-
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
@@ -27,7 +25,6 @@ export function activate(context: vscode.ExtensionContext) {
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 
-	snippetService = new SnippetService(context.extension.extensionPath, context.extension.packageJSON);
 
 	async function fetchIgluCentralSchemas(): Promise<string[]>{
 		// fetch the manifest file for Iglu Central
@@ -268,11 +265,14 @@ export function activate(context: vscode.ExtensionContext) {
 	const selector: vscode.DocumentSelector = { language: '*' };
 
 
-	context.subscriptions.push(vscode.languages.registerDocumentDropEditProvider(selector, new ReverseTextOnDropProvider()));
+	const snippetService = new SnippetService(context.extension.extensionPath, context.extension.packageJSON);
+	context.subscriptions.push(vscode.languages.registerDocumentDropEditProvider(selector, new ReverseTextOnDropProvider(snippetService)));
 
 }
 
 class ReverseTextOnDropProvider implements vscode.DocumentDropEditProvider {
+	constructor(private readonly snippetService: SnippetService){}
+
 	async provideDocumentDropEdits(
 		_document: vscode.TextDocument,
 		position: vscode.Position,
@@ -292,25 +292,23 @@ class ReverseTextOnDropProvider implements vscode.DocumentDropEditProvider {
 
 		// try and read the file (do we need to?)
 
-		// Build a snippet to insert
-		let snippet = new vscode.SnippetString();
 		// Adding the reversed text
 		const x = makeIgluURI(text);
 		const [vendor, event, format, version] = x.replace('iglu:', '').split('/');
 		const [model, revision, addition] = version.split('-');
 		const dropFilePath = _document.uri.fsPath;
 
+		// Build a snippet to insert
+		let snippet = new vscode.SnippetString();
 		// lookup the appropriate snippet
 		// languageId should probably be .js or .ts or something
 		// and based on this languageId we should select the snippet that we are
 		// interested in!
-		if (snippetService) {
-			const predefined = snippetService.getSnippets(_document.languageId, "Send self-describing JSON");
-			if (predefined && predefined.length == 1) snippet = snippetService.evaluate(predefined[0], {
-				vendor, event, format, version, uri: x, model, revision, addition,
-				"iglu:com.example/example/jsonschema/1-0-0": x,
-			});
-		}
+		const predefined = this.snippetService.getSnippets(_document.languageId, "Send self-describing JSON");
+		if (predefined && predefined.length == 1) snippet = this.snippetService.evaluate(predefined[0], {
+			vendor, event, format, version, uri: x, model, revision, addition,
+			"iglu:com.example/example/jsonschema/1-0-0": x,
+		});
 
 		// TODO: need to write sdjson snippets for each language
 		// TODO: how do we determine the destination file type / syntax?
@@ -325,6 +323,8 @@ class ReverseTextOnDropProvider implements vscode.DocumentDropEditProvider {
 		// instead we use insertSnippet to actually get decent indentation & tabstop behavior
 		if (_document === vscode.window.activeTextEditor?.document && snippet.value) {
 			return vscode.window.activeTextEditor.insertSnippet(snippet, position).then((success) => success ? {insertText: ""} : undefined);
+		} else {
+			vscode.window.showInformationMessage(`Unable to generate snippet code for language: ${_document.languageId}`);
 		}
 	}
 }
