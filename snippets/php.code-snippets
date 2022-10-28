@@ -3,34 +3,34 @@
         "scope": "php",
         "prefix": "initCollector",
         "body": [
-            "$emitter = new SyncEmitter($${1:collector.com}-, \"https\", \"POST\", ${2:10}, ${3:false});",
-            "$subject = new Subject();",
-            "$tracker = new Tracker($emitter, $subject);"
+            "\\$emitter = new SyncEmitter(\\$${1:collector_domain}, \"https\", \"POST\", ${2:10}, ${3:false});",
+            "\\$subject = new Subject();",
+            "\\$tracker = new Tracker(\\$emitter, \\$subject);"
         ]
     },
     "Set subject": {
         "scope": "php",
         "prefix": "setSubject",
         "body": [
-            "$subject = new Subject();",
-            "$subject->setPlatform(\"${1:srv}\");",
-            "$subject->setUserId(\"example\");"
+            "\\$subject = new Subject();",
+            "\\$subject->setPlatform(\"${1:srv}\");",
+            "\\$subject->setUserId(\"example\");"
         ]
     },
     "Send structured event": {
         "scope": "php",
         "prefix": "sendStructuredEvent",
         "body": [
-            "trackStructEvent(\"${1:category}\", \"${2:action}\", $label = \"${3:label}\", $property = \"${4:property}\", $value = ${5:1.0});"
+            "\\$tracker->trackStructEvent(\"${1:category}\", \"${2:action}\", \\$label = \"${3:label}\", \\$property = \"${4:property}\", \\$value = ${5:1.0});"
         ]
     },
     "Send self-describing JSON": {
         "scope": "php",
         "prefix": "sendSelfDescribingEvent",
         "body": [
-            "$tracker->trackUnstructEvent(",
+            "\\$tracker->trackUnstructEvent(",
             "\tarray(",
-            "\t\t\"schema\": \"com.acme/example/jsonschema/1-0-0\",",
+            "\t\t\"schema\": \"iglu:com.example/example/jsonschema/1-0-0\",",
             "\t\t\"data\" => array(",
             "\t\t\t\"example\" => \"123\"",
             "\t\t)",
@@ -43,7 +43,7 @@
         "scope": "php",
         "prefix": "screenView",
         "body": [
-            "trackScreenView($name = \"${1:name}\", \"$id = ${2:uuid}\")"
+            "\\$tracker->trackScreenView(\\$name = \"${1:name}\", \\$id = \"${2:uuid}\");"
         ]
     }
 }
