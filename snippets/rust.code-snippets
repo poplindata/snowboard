@@ -11,12 +11,12 @@
         "prefix": "sendStructuredEvent",
         "body": [
             "tracker.track(",
-            "   .category(\"${1:category}\")",
-            "   .action(\"${2:action}\")",
-            "   .label(\"${3:label}\")",
-            "   .value(${4:value})",
-            "   .build()",
-            "   .unwrap(),",
+            "\t.category(\"${1:category}\")",
+            "\t.action(\"${2:action}\")",
+            "\t.label(\"${3:label}\")",
+            "\t.value(${4:value})",
+            "\t.build()",
+            "\t.unwrap(),",
             "None",
             ").await"
         ]
@@ -26,9 +26,9 @@
         "prefix": "sendSelfDescribingEvent",
         "body": [
             "tracker.track(",
-            "   SelfDescribingEvent {",
-            "       schema: \"${1:iglu:com.example/example/jsonschema/1-0-0}\".to_string(),",
-            "       data: json!({\"example\": \"http://url.com\"})",
+            "\tSelfDescribingEvent {",
+            "\t\tschema: \"${1:iglu:com.example/example/jsonschema/1-0-0}\".to_string(),",
+            "\t\tdata: json!({\"example\": \"http://url.com\"})",
             "}",
             ").await;"
         ]

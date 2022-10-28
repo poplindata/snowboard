@@ -4,11 +4,11 @@
         "prefix": "initCollector",
         "body": [
             "BatchEmitter emitter = BatchEmitter.builder()",
-            "        .url(\"${1:http://collector.com}\")",
-            "        .build();",
+            "\t.url(\"${1:http://collector.com}\")",
+            "\t.build();",
             "Tracker tracker = new Tracker",
-            "        .TrackerBuilder(emitter, \"${2:namespace}\", \"${3:appId}\")",
-            "        .build();"
+            "\t.TrackerBuilder(emitter, \"${2:namespace}\", \"${3:appId}\")",
+            "\t.build();"
         ]
     },
     "Set subject": {
@@ -16,8 +16,8 @@
         "prefix": "setSubject",
         "body": [
             "Subject subject = new Subject.SubjectBuilder()",
-            "        .userId(\"${1:java@snowplowanalytics.com}\")",
-            "        .build();"
+            "\t.userId(\"${1:java@snowplowanalytics.com}\")",
+            "\t.build();"
         ]
     },
     "Send structured event": {
@@ -25,12 +25,12 @@
         "prefix": "sendStructuredEvent",
         "body": [
             "Structured structured = Structured.builder()",
-            "                .category(\"${1:category}\")",
-            "                .action(\"${2:action}\")",
-            "                .label(\"${3:label}\")",
-            "                .property(\"${4:property}\")",
-            "                .value(${5:12.34})",
-            "                .build();"
+            "\t.category(\"${1:category}\")",
+            "\t.action(\"${2:action}\")",
+            "\t.label(\"${3:label}\")",
+            "\t.property(\"${4:property}\")",
+            "\t.value(${5:12.34})",
+            "\t.build();"
         ]
     },
     "Send self-describing JSON": {
@@ -51,11 +51,11 @@
         "prefix": "timing",
         "body": [
             "Timing timing = Timing.builder()",
-            "            .category(\"${1:category}\")",
-            "            .variable(\"${2:variable}\")",
-            "            .timing(${3:10}) // in milliseconds",
-            "            .label(\"${4:optional label}\")",
-            "            .build();"
+            "\t.category(\"${1:category}\")",
+            "\t.variable(\"${2:variable}\")",
+            "\t.timing(${3:10}) // in milliseconds",
+            "\t.label(\"${4:optional label}\")",
+            "\t.build();"
         ]
     },
     "Screen view": {
@@ -63,9 +63,9 @@
         "prefix": "screenView",
         "body": [
             "ScreenView screenView = ScreenView.builder()",
-            "            .name(\"${1:screen_name}\")",
-            "            .id(\"${2:screen_id}\")",
-            "            .build();"
+            "\t.name(\"${1:screen_name}\")",
+            "\t.id(\"${2:screen_id}\")",
+            "\t.build();"
         ]
     },
     "Ecommerce": {
@@ -73,25 +73,25 @@
         "prefix": "ecommerce",
         "body": [
             ".price(${1:1.0})",
-            "        .quantity(${2:2})",
-            "        .name(\"${3:item name}\")",
-            "        .category(\"${4:category}\")",
-            "        .currency(\"${5:currency}\")",
-            "        .build();",
+            "\t.quantity(${2:2})",
+            "\t.name(\"${3:item name}\")",
+            "\t.category(\"${4:category}\")",
+            "\t.currency(\"${5:currency}\")",
+            "\t.build();",
             "",
             "// Then make the EcommerceTransaction event",
             "EcommerceTransaction ecommerceTransaction = EcommerceTransaction.builder()",
-            "        .items(item) // Add the EcommerceTransactionItem events",
-            "        .orderId(\"${6:should be the same as item_id}\")",
-            "        .totalValue(${7:2.0})",
-            "        .affiliation(\"${8:affiliation}\")",
-            "        .taxValue(${9:2.0})",
-            "        .shipping(${10:3.0})",
-            "        .city(\"${11:city}\")",
-            "        .state(\"${12:state}\")",
-            "        .country(\"${13:country}\")",
-            "        .currency(\"${14:currency}\")",
-            "        .build();"
+            "\t.items(item) // Add the EcommerceTransactionItem events",
+            "\t.orderId(\"${6:should be the same as item_id}\")",
+            "\t.totalValue(${7:2.0})",
+            "\t.affiliation(\"${8:affiliation}\")",
+            "\t.taxValue(${9:2.0})",
+            "\t.shipping(${10:3.0})",
+            "\t.city(\"${11:city}\")",
+            "\t.state(\"${12:state}\")",
+            "\t.country(\"${13:country}\")",
+            "\t.currency(\"${14:currency}\")",
+            "\t.build();"
         ]
     }
 }

@@ -29,12 +29,12 @@
         "prefix": "sendSelfDescribingEvent",
         "body": [
             "$tracker->trackUnstructEvent(",
-            "   array(",
-            "       \"schema\": \"com.acme/example/jsonschema/1-0-0\",",
-            "       \"data\" => array(",
-            "           \"example\" => \"123\"",
-            "       )",
-            "   )",
+            "\tarray(",
+            "\t\t\"schema\": \"com.acme/example/jsonschema/1-0-0\",",
+            "\t\t\"data\" => array(",
+            "\t\t\t\"example\" => \"123\"",
+            "\t\t)",
+            "\t)",
             ");"
         ]
 

@@ -27,8 +27,8 @@
         "prefix": "timing",
         "body": [
             "Timing event = new Timing(\"${1:category}\", \"${2:variable}\", ${3:5})",
-            "    .label(\"${4:label}\");",
-            "                ",
+            "\t.label(\"${4:label}\");",
+            "",
             "tracker.track(event);"
         ]
     },
@@ -45,8 +45,8 @@
         "prefix": "consentGranted",
         "body": [
             "ConsentGranted event = new ConsentGranted(\"${1:2022-05-08T18:12:02+00:00}\", \"${2:document_id}\", \"${3:document_version}\")",
-            "        .documentDescription(\"${4:doc description}\")",
-            "        .documentName(\"${5:doc name}\");",
+            "\t\t.documentDescription(\"${4:doc description}\")",
+            "\t\t.documentName(\"${5:doc name}\");",
             "tracker.track(event);"
         ]
     },
@@ -55,8 +55,8 @@
         "prefix": "consentWithdrawn",
         "body": [
             "ConsentWithdrawn event = new ConsentWithdrawn(true, \"${1:document_id}\", \"${2:document_version}\")",
-            "        .documentDescription(\"${3:doc description}\")",
-            "        .documentName(\"${4:doc name}\");",
+            "\t\t.documentDescription(\"${3:doc description}\")",
+            "\t\t.documentName(\"${4:doc name}\");",
             "tracker.track(event);"
         ]
     },

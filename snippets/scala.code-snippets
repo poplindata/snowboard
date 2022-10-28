@@ -3,7 +3,7 @@
         "scope": "scala",
         "prefix": "initCollector",
         "body": [
-            "val emitter = AsyncEmitter.createAndStart(EndpointParams(\"collector.acme.com\"))",            
+            "val emitter = AsyncEmitter.createAndStart(EndpointParams(\"collector.acme.com\"))",
             "val tracker = new Tracker(emitter, \"${1:tracker_name}\", \"${2:app_id}\")"
         ]
     },
@@ -12,8 +12,8 @@
         "prefix": "setSubject",
         "body": [
             "val subject = new Subject()",
-            "  .setUserId(\"${1:user-123}\")",
-            "  .setPlatform(${2:srv})"
+            "\t.setUserId(\"${1:user-123}\")",
+            "\t.setPlatform(${2:srv})"
         ]
     },
     "Send structured event": {
@@ -28,10 +28,10 @@
         "prefix": "sendSelfDescribingEvent",
         "body": [
             "val productViewEvent = SelfDescribingJson(",
-            "  SchemaKey(\"${1:com.example}\", \"${2:example}\", \"jsonschema\", SchemaVer(${4:1,0,0})),",
-            "  Json.obj(",
-            "    \"${5:sku}\" := \"${6:123}\"",
-            "  )",
+            "\tSchemaKey(\"${1:com.example}\", \"${2:example}\", \"jsonschema\", SchemaVer(${4:1,0,0})),",
+            "\tJson.obj(",
+            "\t\t\"${5:sku}\" := \"${6:123}\"",
+            "\t)",
             ")"
         ]
     }

@@ -4,10 +4,10 @@
         "prefix": "initCollector",
         "body": [
             "auto tracker = Snowplow::create_tracker(",
-            "    \"${1:namespace}\", // tracker namespace used to identify the tracker",
-            "    \"${2:https://com.collector}\", // Snowplow collector URL",
-            "    POST, // HTTP method used to send events to the collector",
-            "    \"${3:events.db}\" // Relative path to an SQLite database used for event queue and session tracking",
+            "\t\"${1:namespace}\", // tracker namespace used to identify the tracker",
+            "\t\"${2:https://com.collector}\", // Snowplow collector URL",
+            "\tPOST, // HTTP method used to send events to the collector",
+            "\t\"${3:events.db}\" // Relative path to an SQLite database used for event queue and session tracking",
             ");"
         ]
     },

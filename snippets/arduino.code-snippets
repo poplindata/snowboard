@@ -4,9 +4,9 @@
         "prefix": "sendStructuredEvent",
         "body": [
             "int trackStructEvent(const char *aCategory,",
-            "                     const char *aAction,",
-            "                     const char *aLabel = NULL,",
-            "                     const char *aProperty = NULL) const; TODO: this seems wrong"
+            "\t\t\t\t\tconst char *aAction,",
+            "\t\t\t\t\tconst char *aLabel = NULL,",
+            "\t\t\t\t\tconst char *aProperty = NULL) const; TODO: this seems wrong"
         ]
     }
 }

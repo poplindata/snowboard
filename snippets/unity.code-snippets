@@ -19,12 +19,12 @@
         "prefix": "sendStructuredEvent",
         "body": [
             "t1.Track(new Structured()",
-            "    .SetCategory(\"${1:category}\")",
-            "    .SetAction(\"${2:action}\")",
-            "    .SetLabel(\"${3:label}\")",
-            "    .SetProperty(\"${4:property}\")",
-            "    .SetValue(${5:1.00})",
-            "    .Build());"
+            "\t.SetCategory(\"${1:category}\")",
+            "\t.SetAction(\"${2:action}\")",
+            "\t.SetLabel(\"${3:label}\")",
+            "\t.SetProperty(\"${4:property}\")",
+            "\t.SetValue(${5:1.00})",
+            "\t.Build());"
         ]
     },
     "Send self-describing JSON": {
@@ -44,11 +44,11 @@
         "prefix": "timing",
         "body": [
             "t1.Track(new Timing()",
-            "    .SetCategory(\"${1:category}\")",
-            "    .SetVariable(\"${2:variable}\")",
-            "    .SetTiming(${3:1})",
-            "    .SetLabel(\"${4:label}\")",
-            "    .Build());"
+            "\t.SetCategory(\"${1:category}\")",
+            "\t.SetVariable(\"${2:variable}\")",
+            "\t.SetTiming(${3:1})",
+            "\t.SetLabel(\"${4:label}\")",
+            "\t.Build());"
         ]
     },
     "Screen view": {
@@ -56,9 +56,9 @@
         "prefix": "screenView",
         "body": [
             "t1.Track(new ScreenView()",
-            "    .SetName(\"${1:screen_name}\")",
-            "    .SetId(\"${2:screen_id}\")",
-            "    .Build());"
+            "\t.SetName(\"${1:screen_name}\")",
+            "\t.SetId(\"${2:screen_id}\")",
+            "\t.Build());"
         ]
     }
 }

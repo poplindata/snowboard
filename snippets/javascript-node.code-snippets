@@ -4,11 +4,11 @@
         "prefix": "sendStructuredEvent",
         "body": [
             "t.track(buildStructEvent({",
-            "  category: \"${1:category}\", ",
-            "  action: \"${2:action}\", ",
-            "  label: \"${3:label}\", ",
-            "  property: \"${4:property}\", ",
-            "  value: ${5:1}",
+            "\tcategory: \"${1:category}\", ",
+            "\taction: \"${2:action}\", ",
+            "\tlabel: \"${3:label}\", ",
+            "\tproperty: \"${4:property}\", ",
+            "\tvalue: ${5:1}",
             "}));"
         ]
     },
@@ -17,12 +17,12 @@
         "prefix": "sendSelfDescribingEvent",
         "body": [
             "t.track(buildSelfDescribingEvent({",
-            "  event: {",
-            "    schema: \"${1:iglu:com.example/example/jsonschema/1-0-0}\",",
-            "    data: {",
-            "      save_id: \"${2:4321}\",",
-            "    }",
-            "  }",
+            "\tevent: {",
+            "\t\tschema: \"${1:iglu:com.example/example/jsonschema/1-0-0}\",",
+            "\t\tdata: {",
+            "\t\t\tsave_id: \"${2:4321}\",",
+            "\t\t}",
+            "\t}",
             "}));"
         ]
     },
@@ -31,8 +31,8 @@
         "prefix": "screenView",
         "body": [
             "t.track(buildScreenView({",
-            "  name: \"${1:screen_name}\", ",
-            "  id: \"${2:screen_id}\"",
+            "\tname: \"${1:screen_name}\", ",
+            "\tid: \"${2:screen_id}\"",
             "}));"
         ]
     }

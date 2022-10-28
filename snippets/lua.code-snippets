@@ -19,8 +19,8 @@
         "prefix": "sendSelfDescribingEvent",
         "body": [
             "tracker:track_self_describing_event(",
-            "  \"${1:iglu:com.example/example/jsonschema/1-0-0}\",",
-            "  { sku = \"${2:ASO01043}\", unitPrice = ${3:49.95}, quantity = ${4:1000} }",
+            "\t\"${1:iglu:com.example/example/jsonschema/1-0-0}\",",
+            "\t{ sku = \"${2:ASO01043}\", unitPrice = ${3:49.95}, quantity = ${4:1000} }",
             ")"
         ]
     },

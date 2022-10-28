@@ -28,7 +28,7 @@
         "prefix": "timing",
         "body": [
             "let event = Timing(category: \"${1:category}\", variable: \"${2:variable}\", timing: ${3:123})",
-            "    .label(\"${4:label}\")       ",
+            "\t.label(\"${4:label}\")",
             "tracker.track(event)"
         ]
     },
@@ -44,10 +44,10 @@
         "scope": "swift,objectivec",
         "prefix": "consentGranted",
         "body": [
-            "let event = ConsentGranted(expiry: \"${1:2022-01-01T00:00:00Z}\", documentId: \"${2:document_id}\", version: \"${3:1.1}\")       ",
-            "    .name(\"${4:document_name}\")",
-            "    .documentDescription(\"${5:description}\")",
-            "                ",
+            "let event = ConsentGranted(expiry: \"${1:2022-01-01T00:00:00Z}\", documentId: \"${2:document_id}\", version: \"${3:1.1}\")",
+            "\t.name(\"${4:document_name}\")",
+            "\t.documentDescription(\"${5:description}\")",
+            "",
             "tracker.track(event)"
         ]
     },
@@ -56,12 +56,12 @@
         "prefix": "consentWithdrawn",
         "body": [
             "let event = ConsentWithdrawn()",
-            "    .all(${1:true})",
-            "    .documentId(\"${2:1234abcd}\")",
-            "    .version(\"${3:1.1}\")       ",
-            "    .name(\"${4:document_name}\")",
-            "    .documentDescription(\"${5:description}\")",
-            "                ",
+            "\t.all(${1:true})",
+            "\t.documentId(\"${2:1234abcd}\")",
+            "\t.version(\"${3:1.1}\")       ",
+            "\t.name(\"${4:document_name}\")",
+            "\t.documentDescription(\"${5:description}\")",
+            "",
             "tracker.track(event)"
         ]
     },
@@ -70,22 +70,22 @@
         "prefix": "ecommerce",
         "body": [
             "let transactionID = \"${1:6a8078be}\"",
-            "                ",
-            "let itemArray = [       ",
-            "  EcommerceItem(sku: \"${2:DemoItemSku}\", price: ${3:0.75}, quantity: ${4:1})",
-            "    .name(\"${5:DemoItemName}\")       ",
-            "    .category(\"${6:DemoItemCategory}\")       ",
-            "    .currency(\"${7:USD}\")       ",
-            "]       ",
-            "                ",
-            "let event = Ecommerce(orderId: transactionID, totalValue: ${8:350}, items: itemArray)   ",
-            "    .affiliation(\"${9:DemoTransactionAffiliation}\")",
-            "    .taxValue(${10:10})",
-            "    .shipping(${11:15})",
-            "    .city(\"${12:Boston}\")",
-            "    .state(\"${13:Massachisetts}\")",
-            "    .country(\"${14:USA}\")",
-            "    .currency(\"${15:USD}\")",
+            "",
+            "let itemArray = [",
+            "\tEcommerceItem(sku: \"${2:DemoItemSku}\", price: ${3:0.75}, quantity: ${4:1})",
+            "\t\t.name(\"${5:DemoItemName}\")",
+            "\t\t.category(\"${6:DemoItemCategory}\")",
+            "\t\t.currency(\"${7:USD}\")",
+            "]",
+            "",
+            "let event = Ecommerce(orderId: transactionID, totalValue: ${8:350}, items: itemArray)",
+            "\t.affiliation(\"${9:DemoTransactionAffiliation}\")",
+            "\t.taxValue(${10:10})",
+            "\t.shipping(${11:15})",
+            "\t.city(\"${12:Boston}\")",
+            "\t.state(\"${13:Massachisetts}\")",
+            "\t.country(\"${14:USA}\")",
+            "\t.currency(\"${15:USD}\")",
             "tracker.track(event)"
         ]
     },

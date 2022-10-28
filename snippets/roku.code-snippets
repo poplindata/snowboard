@@ -4,9 +4,9 @@
         "prefix": "initCollector",
         "body": [
             "m.global.snowplow.init = {",
-            "    network: {",
-            "        collector: \"${1:http://collector.com}\"",
-            "    }",
+            "\tnetwork: {",
+            "\t\tcollector: \"${1:http://collector.com}\"",
+            "\t}",
             "}"
         ]
     },
@@ -22,10 +22,10 @@
         "prefix": "sendSelfDescribingEvent",
         "body": [
             "m.global.snowplow.selfDescribing = {",
-            "    data: {",
-            "        saveId: \"${1:4321}\"",
-            "    },",
-            "    schema: \"${5:iglu:com.example/example/jsonschema/1-0-0}\"",
+            "\tdata: {",
+            "\t\tsaveId: \"${1:4321}\"",
+            "\t},",
+            "\tschema: \"${5:iglu:com.example/example/jsonschema/1-0-0}\"",
             "}"
         ]
     },
