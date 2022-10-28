@@ -321,6 +321,10 @@ class ReverseTextOnDropProvider implements vscode.DocumentDropEditProvider {
 		const [model, revision, addition] = version.split('-');
 		const dropFilePath = _document.uri.fsPath;
 
+		// lookup the appropriate snippet
+		// languageId should probably be .js or .ts or something
+		// and based on this languageId we should select the snippet that we are
+		// interested in!
 		if (snippetService) {
 			const predefined = snippetService.getSnippets(_document.languageId, "Send self-describing JSON");
 			if (predefined && predefined.length == 1) snippet = snippetService.evaluate(predefined[0], {
@@ -328,127 +332,6 @@ class ReverseTextOnDropProvider implements vscode.DocumentDropEditProvider {
 				"iglu:com.example/example/jsonschema/1-0-0": x,
 			});
 		}
-
-		var snip: string = '';
-		if (_document.languageId === 'javascript'){
-			snip += `
-trackSelfDescribingEvent({
-	event: {
-		schema: '${x}',
-		data: {}
-	}
-});`;
-		}
-		else if (_document.languageId === 'objective-c') {
-			console.log('hi inserting objc code');
-			snip += `
-let event = SelfDescribing(schema: "${x}", payload: []);
-tracker.track(event);
-			`;
-		}
-		else if (_document.languageId === 'java'){
-			// is there a more specific language for Android?
-			snip += 
-`SelfDescribingJson json = new SelfDescribingJson("${x}", data);
-SelfDescribing event = new SelfDescribing(json);
-`;		
-		}
-		else if (_document.languageId === 'csharp') {
-			snip += 
-`
-SelfDescribingJson json = new SelfDescribingJson(\"${x}\", data);
-`
-		}
-		else if (_document.languageId === 'php') {
-			// TODO: this needs a different schema version!
-			let phpSchema = `iglu:${vendor}/${event}/${format}/${model}.${revision}.${addition}`
-			snip +=
-`
-$tracker->trackUnstructEvent(
-    array(
-        "schema" => "${phpSchema}",
-        "data" => array(
-            
-        )
-    )
-);`
-		}
-		else if (_document.languageId === 'cpp'){
-			snip += 
-`
-SelfDescribingJson sdj("${x}", data);
-SelfDescribingEvent sde(sdj);
-Snowplow::get_default_tracker()->track(sde);
-`
-		}
-		else if (_document.languageId === 'ruby') {
-			snip +=
-`
-self_desc_json = SnowplowTracker::SelfDescribingJson.new(
-	"${x}",
-	{}
-)
-tracker.track_self_describing_event(self_desc_json)
-`
-		}
-		else if (_document.languageId === 'scala'){
-			// TODO: this needs to look different!
-			snip +=
-`
-val event = SelfDescribingJson(
-	SchemaKey(${vendor}, ${event}, ${format}, SchemaVer(${model},${revision},${addition})),
-	Json.obj()
-)
-tracker.trackSelfDescribingEvent(event)
-`
-		}
-		else if (_document.languageId === 'python') {
-			snip +=
-`
-tracker.track_self_describing_event(SelfDescribingJson(
-	"${x}",
-	{}
-))
-`
-		}
-		else if (_document.languageId === 'go') {
-			snip += 
-`
-sdj := sp.InitSelfDescribingJson("${x}", data)
-
-tracker.TrackSelfDescribingEvent(sp.SelfDescribingEvent{
-  Event: sdj,
-})
-`
-		}
-		else if (_document.languageId === 'dart') {
-			snip += 
-`
-tracker.track(SelfDescribing(
-    schema: '${x}',
-    data: {}
-));
-`
-		}
-		else if (_document.languageId === 'lua') {
-			snip +=
-`
-tracker:track_self_describing_event(
-	"${x}",
-	{ }
-)
-`		}
-		else {
-			vscode.window.showInformationMessage(`Unable to generate snippet code for language: ${_document.languageId}`);
-		}
-		
-		// lookup the appropriate snippet
-
-
-
-		// languageId should probably be .js or .ts or something
-		// and based on this languageId we should select the snippet that we are
-		// interested in!
 
 		// TODO: need to write sdjson snippets for each language
 		// TODO: how do we determine the destination file type / syntax?
@@ -458,8 +341,6 @@ tracker:track_self_describing_event(
 		// into an existing event or not?
 		// we get a line and a character number
 		// but no surrounding text?
-		if (!snippet.value && snip) snippet.appendText([...snip].join(''));
-		// snippet.appendTabstop()
 
 		// none of the "official" return values from provideDocumentDropEdits treat snippets properly
 		// instead we use insertSnippet to actually get decent indentation & tabstop behavior
@@ -471,4 +352,3 @@ tracker:track_self_describing_event(
 
 // this method is called when your extension is deactivated
 export function deactivate() {}
-

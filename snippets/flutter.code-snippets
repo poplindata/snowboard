@@ -17,7 +17,10 @@
         "scope": "dart",
         "prefix": "sendSelfDescribingEvent",
         "body": [
-            "tracker.track(SelfDescribing( schema: '${1:iglu:com.example/example/jsonschema/1-0-0}', data: {  } ));"
+            "tracker.track(SelfDescribing(",
+            "\tschema: '${1:iglu:com.example/example/jsonschema/1-0-0}',",
+            "\tdata: {}",
+            "));"
         ]
     },
     "Timing": {

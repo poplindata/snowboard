@@ -23,7 +23,7 @@
         "prefix": "sendSelfDescribingEvent",
         "body": [
             "self_desc_json = SnowplowTracker::SelfDescribingJson.new(",
-            "\t\"iglu:com.example/example/jsonschema/1-0-0",
+            "\t\"${1:iglu:com.example/example/jsonschema/1-0-0}\",",
             "\t{",
             "\t\t\"value\": 123\"",
             "\t}",

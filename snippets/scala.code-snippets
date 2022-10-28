@@ -27,8 +27,8 @@
         "scope": "scala",
         "prefix": "sendSelfDescribingEvent",
         "body": [
-            "val productViewEvent = SelfDescribingJson(",
-            "\tSchemaKey(\"${1:com.example}\", \"${2:example}\", \"jsonschema\", SchemaVer(${4:1,0,0})),",
+            "val event = SelfDescribingJson(",
+            "\tSchemaKey.fromUri(\"${1:iglu:com.example/example/jsonschema/1-0-0}\").toOption.get,",
             "\tJson.obj(",
             "\t\t\"${5:sku}\" := \"${6:123}\"",
             "\t)",
