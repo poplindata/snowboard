@@ -19,7 +19,7 @@
         "prefix": "sendSelfDescribingEvent",
         "body": [
             "let data = [\"a\": \"b\" as NSObject];",
-            "let event = SelfDescribing(schema: \"${3:iglu:com.acme/example/jsonschema/1-0-0}\", payload: data)",
+            "let event = SelfDescribing(schema: \"${3:iglu:com.example/example/jsonschema/1-0-0}\", payload: data)",
             "tracker.track(event)"
         ]
     },

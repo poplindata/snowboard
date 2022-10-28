@@ -34,7 +34,7 @@
         "scope": "cpp",
         "prefix": "sendSelfDescribingEvent",
         "body": [
-            "SelfDescribingJson sdj(\"iglu:com.acme/example/jsonschema/1-0-0\", data);",
+            "SelfDescribingJson sdj(\"iglu:com.example/example/jsonschema/1-0-0\", data);",
             "SelfDescribingEvent sde(sdj);",
             "Snowplow::get_default_tracker()->track(sde);"
         ]

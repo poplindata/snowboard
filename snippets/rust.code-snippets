@@ -27,7 +27,7 @@
         "body": [
             "tracker.track(",
             "   SelfDescribingEvent {",
-            "       schema: \"${1:iglu:com.acme/link_click/jsonschema/1-0-0\".to_string(),",
+            "       schema: \"${1:iglu:com.example/example/jsonschema/1-0-0}\".to_string(),",
             "       data: json!({\"example\": \"http://url.com\"})",
             "}",
             ").await;"

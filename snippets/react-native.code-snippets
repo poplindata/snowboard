@@ -39,7 +39,7 @@
         "prefix": "sendSelfDescribingEvent",
         "body": [
             "tracker.trackSelfDescribingEvent({",
-            "    schema: '${1:iglu:com.snowplowanalytics.snowplow/link_click/jsonschema/1-0-1}',",
+            "    schema: '${1:iglu:com.example/example/jsonschema/1-0-0}',",
             "    data: {targetUrl: '${2:http://a-target-url.com}'}",
             "});"
         ]

@@ -43,7 +43,7 @@
             "",
             "// Wrap the map in a SelfDescribingJson",
             "// The specified schema allows for a String property \"targetUrl\"",
-            "SelfDescribingJson sdj = new SelfDescribingJson(\"${2:iglu:com.snowplowanalytics.snowplow/link_click/jsonschema/1-0-1}\", eventData);"
+            "SelfDescribingJson sdj = new SelfDescribingJson(\"${2:iglu:com.example/example/jsonschema/1-0-0}\", eventData);"
         ]
     },
     "Timing": {

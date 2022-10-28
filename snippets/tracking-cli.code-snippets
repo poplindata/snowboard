@@ -3,7 +3,7 @@
         "scope": "html",
         "prefix": "initCollector",
         "body": [
-            "snowplowtrk --collector ${1:collector.com} --appid ${2:app_id} --method POST --schema ${3:iglu:com.snowplowanalytics.snowplow/event/jsonschema/1-0-0} --json \"${4:{\\\"hello\\\":\\\"world\\\"}}\""
+            "snowplowtrk --collector ${1:collector.com} --appid ${2:app_id} --method POST --schema ${3:iglu:com.example/example/jsonschema/1-0-0} --json \"${4:{\\\"hello\\\":\\\"world\\\"}}\""
         ]
     }
 }

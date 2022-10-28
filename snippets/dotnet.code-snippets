@@ -36,7 +36,7 @@
             "data.Add(\"${1:Event}\", \"${2:Data}\")",
             "",
             "// We then create a new SelfDescribingJson",
-            "SelfDescribingJson json = new SelfDescribingJson(\"${3:iglu:com.acme/example/jsonschema/1-0-0}\", data);"
+            "SelfDescribingJson json = new SelfDescribingJson(\"${3:iglu:com.example/example/jsonschema/1-0-0}\", data);"
         ]
     },
     "Timing": {

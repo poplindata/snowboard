@@ -326,7 +326,6 @@ class ReverseTextOnDropProvider implements vscode.DocumentDropEditProvider {
 			if (predefined && predefined.length == 1) snippet = snippetService.evaluate(predefined[0], {
 				vendor, event, format, version, uri: x, model, revision, addition,
 				"iglu:com.example/example/jsonschema/1-0-0": x,
-				"iglu:com.acme/example/jsonschema/1-0-0": x,
 			});
 		}
 

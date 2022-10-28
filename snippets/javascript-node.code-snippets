@@ -18,7 +18,7 @@
         "body": [
             "t.track(buildSelfDescribingEvent({",
             "  event: {",
-            "    schema: \"${1:iglu:com.acme/example/jsonschema/1-0-0}\",",
+            "    schema: \"${1:iglu:com.example/example/jsonschema/1-0-0}\",",
             "    data: {",
             "      save_id: \"${2:4321}\",",
             "    }",
