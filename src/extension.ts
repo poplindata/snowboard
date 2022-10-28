@@ -193,22 +193,21 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 
-	let newSchema = vscode.commands.registerCommand('snowboard.newSchema', () => {
-		// let success = vscode.commands.executeCommand('workbench.action.files.newUntitledFile');
-		createBrandNewSchema();
-	});
-
-	let newAddition = vscode.commands.registerCommand('snowboard.newAddition', () => {
-		createNewSchema("addition");
-	});
-
-	let newRevision = vscode.commands.registerCommand('snowboard.newRevision', () => {
-		createNewSchema("revision");
-	});
-
-	let newModel = vscode.commands.registerCommand('snowboard.newModel', () => {
-		createNewSchema("model");
-	});
+	context.subscriptions.push(
+		vscode.commands.registerCommand('snowboard.newSchema', () => {
+			// let success = vscode.commands.executeCommand('workbench.action.files.newUntitledFile');
+			createBrandNewSchema();
+		}),
+		vscode.commands.registerCommand('snowboard.newAddition', () => {
+			createNewSchema("addition");
+		}),
+		vscode.commands.registerCommand('snowboard.newRevision', () => {
+			createNewSchema("revision");
+		}),
+		vscode.commands.registerCommand('snowboard.newModel', () => {
+			createNewSchema("model");
+		}),
+	);
 
 	// get Iglu schemas
 	let igluUris: string[] = [];
@@ -260,7 +259,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(igluProvider);
 
-	context.subscriptions.push(newSchema);
 
 	const selector: vscode.DocumentSelector = { language: '*' };
 
