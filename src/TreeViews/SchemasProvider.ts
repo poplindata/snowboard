@@ -53,6 +53,19 @@ type SchemaProviderElement =
       schemaType: DataStructureResource["meta"]["schemaType"];
     };
 
+export class SchemasDragAndDropController implements vscode.TreeDragAndDropController<string> {
+  dropMimeTypes: readonly string[] = [];
+  dragMimeTypes: readonly string[] = ["application/schema+json", "application/json", "text/uri-list"];
+
+  constructor(private readonly provider: SchemasProvider) {}
+
+  handleDrag(source: readonly string[], dataTransfer: vscode.DataTransfer, token: vscode.CancellationToken): void {
+    const schemaUris = source.map((s) => this.provider.getTreeItem(s).resourceUri);
+    const uriList = schemaUris.filter(Boolean).map((uri) => uri!.toString()).join("\n");
+    dataTransfer.set("text/uri-list", new vscode.DataTransferItem(uriList));
+  }
+};
+
 export class SchemasProvider
   implements vscode.TreeDataProvider<string>, vscode.Disposable
 {
@@ -92,6 +105,10 @@ export class SchemasProvider
   }
 
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
+
+  public static getElementById(key: string): SchemaProviderElement | undefined {
+    return SchemasProvider.elementCache.get(key);
+  }
 
   private idForElement(element: SchemaProviderElement): string {
     let id: string;
@@ -142,7 +159,7 @@ export class SchemasProvider
   }
 
   getTreeItem(elementId: string): vscode.TreeItem {
-    const element = SchemasProvider.elementCache.get(elementId)!;
+    const element = SchemasProvider.getElementById(elementId)!;
 
     const { Collapsed, Expanded, None } = vscode.TreeItemCollapsibleState;
     const buildTI = (props: Partial<vscode.TreeItem>) =>
@@ -184,8 +201,10 @@ export class SchemasProvider
       case "version":
         const igluUri = `iglu:${element.vendor}/${element.name}/${element.format}/${element.version}`;
         let command: vscode.Command;
+        let resourceUri: vscode.Uri | undefined = undefined;
 
         if (element.env === "LOCAL") {
+          resourceUri = vscode.Uri.parse(element.contentHash);
           command = {
             title: "View Iglu Schema",
             command: "vscode.open",
@@ -198,6 +217,8 @@ export class SchemasProvider
             path: ["", element.hash, element.format, element.version].join("/"),
             query: element.env ? `?env=${element.env}` : undefined,
           });
+
+          resourceUri = consoleUri;
 
           command = {
             title: "View Iglu Schema",
@@ -218,6 +239,8 @@ export class SchemasProvider
             fragment: element.organizationId,
           });
 
+          resourceUri = staticUri;
+
           command = {
             title: "View Iglu Schema",
             command: "vscode.open",
@@ -229,6 +252,8 @@ export class SchemasProvider
           label: element.version,
           collapsibleState: None,
           description: `${element.schemaType || "schema"} | ${element.env}`,
+          tooltip: igluUri,
+          resourceUri,
           command,
         });
     }
@@ -238,7 +263,7 @@ export class SchemasProvider
     if (!elementId) {
       return (await this.getRootChildren()).map(this.idForElement);
     } else {
-      const element = SchemasProvider.elementCache.get(elementId)!;
+      const element = SchemasProvider.getElementById(elementId)!;
       return (await this.getNodeChildren(element)).map(this.idForElement);
     }
   }
