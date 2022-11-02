@@ -17,7 +17,10 @@
         "scope": "dart",
         "prefix": "sendSelfDescribingEvent",
         "body": [
-            "tracker.track(SelfDescribing( schema: '${1:iglu:com.example/example/jsonschema/1-0-0}', data: {  } ));"
+            "tracker.track(SelfDescribing(",
+            "\tschema: '${1:iglu:com.example/example/jsonschema/1-0-0}',",
+            "\tdata: {}",
+            "));"
         ]
     },
     "Timing": {
@@ -25,10 +28,10 @@
         "prefix": "timing",
         "body": [
             "tracker.track(Timing(",
-            "    category: '${1:category}',",
-            "    variable: '${2:variable}',",
-            "    timing: ${3:1},",
-            "    label: '${4:label}',",
+            "\tcategory: '${1:category}',",
+            "\tvariable: '${2:variable}',",
+            "\ttiming: ${3:1},",
+            "\tlabel: '${4:label}',",
             "));"
         ]
     },
@@ -37,10 +40,10 @@
         "prefix": "screenView",
         "body": [
             "tracker.track(ScreenView(",
-            "    id: '${1:screen_id}',",
-            "    name: '${2:screen_name}',",
-            "    type: '${3:screen_type}',",
-            "    transitionType: '${4:none}'));"
+            "\tid: '${1:screen_id}',",
+            "\tname: '${2:screen_name}',",
+            "\ttype: '${3:screen_type}',",
+            "\ttransitionType: '${4:none}'));"
         ]
     },
     "Consent granted": {
@@ -48,11 +51,11 @@
         "prefix": "consentGranted",
         "body": [
             "tracker.track(ConsentGranted(",
-            "    expiry: DateTime.now(),",
-            "    documentId: '${1:1234}',",
-            "    version: '${2:5}',",
-            "    name: '${3:name}',",
-            "    documentDescription: '${4:description}',",
+            "\texpiry: DateTime.now(),",
+            "\tdocumentId: '${1:1234}',",
+            "\tversion: '${2:5}',",
+            "\tname: '${3:name}',",
+            "\tdocumentDescription: '${4:description}',",
             "));"
         ]
     },
@@ -61,11 +64,11 @@
         "prefix": "consentWithdrawn",
         "body": [
             "tracker.track(ConsentWithdrawn(",
-            "    all: ${1:false},",
-            "    documentId: '${2:1234}',",
-            "    version: '${3:5}',",
-            "    name: '${4:name}',",
-            "    documentDescription: '${5:description}',",
+            "\tall: ${1:false},",
+            "\tdocumentId: '${2:1234}',",
+            "\tversion: '${3:5}',",
+            "\tname: '${4:name}',",
+            "\tdocumentDescription: '${5:description}',",
             "));"
         ]
     }

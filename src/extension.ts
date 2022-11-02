@@ -9,6 +9,7 @@ import fetch from 'isomorphic-fetch';
 
 import { EnvironmentsProvider, SchemasProvider } from './TreeViews';
 import { AuthenticationProvider, TextDocumentContentProvider } from './SnowplowConsole';
+import { SnippetService } from './SnippetService';
 
 function makeIgluURI(path: string) {
 	// make Iglu uri from local file path
@@ -24,24 +25,6 @@ export function activate(context: vscode.ExtensionContext) {
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 
-
-
-	async function listLocalSchemas(): Promise<string[]> {
-		// list local schemas
-		const wsedit = new vscode.WorkspaceEdit();
-		if (!vscode.workspace.workspaceFolders) {
-			vscode.window.showInformationMessage("A folder or workspace must be opened to use this command.");
-			return [];
-		}
-
-		let workspaceFolderPath: string = vscode.workspace.workspaceFolders[0].uri.path;
-
-		const resources = await vscode.workspace.findFiles('schemas/*/*/*/*');
-		const schemas = await Promise.all(resources.map(file => makeIgluURI(file.path)));
-
-		return schemas;
-
-	}
 
 	async function fetchIgluCentralSchemas(): Promise<string[]>{
 		// fetch the manifest file for Iglu Central
@@ -210,29 +193,24 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 
-	let newSchema = vscode.commands.registerCommand('snowboard.newSchema', () => {
-		// let success = vscode.commands.executeCommand('workbench.action.files.newUntitledFile');
-		createBrandNewSchema();
-	});
-
-	let newAddition = vscode.commands.registerCommand('snowboard.newAddition', () => {
-		createNewSchema("addition");
-	});
-
-	let newRevision = vscode.commands.registerCommand('snowboard.newRevision', () => {
-		createNewSchema("revision");
-	});
-
-	let newModel = vscode.commands.registerCommand('snowboard.newModel', () => {
-		createNewSchema("model");
-	});
+	context.subscriptions.push(
+		vscode.commands.registerCommand('snowboard.newSchema', () => {
+			// let success = vscode.commands.executeCommand('workbench.action.files.newUntitledFile');
+			createBrandNewSchema();
+		}),
+		vscode.commands.registerCommand('snowboard.newAddition', () => {
+			createNewSchema("addition");
+		}),
+		vscode.commands.registerCommand('snowboard.newRevision', () => {
+			createNewSchema("revision");
+		}),
+		vscode.commands.registerCommand('snowboard.newModel', () => {
+			createNewSchema("model");
+		}),
+	);
 
 	// get Iglu schemas
 	let igluUris: string[] = [];
-
-	// let remoteSchemas = fetchIgluCentralSchemas().then(function(x) {console.log('schemas:', x)});
-	let localSchemas = listLocalSchemas().then(x => igluUris.concat(x));
-	console.log('schemas length:', igluUris);
 
 	const igluProvider = vscode.languages.registerCompletionItemProvider('*', {
 
@@ -281,16 +259,18 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(igluProvider);
 
-	context.subscriptions.push(newSchema);
 
 	const selector: vscode.DocumentSelector = { language: '*' };
 
 
-	context.subscriptions.push(vscode.languages.registerDocumentDropEditProvider(selector, new ReverseTextOnDropProvider()));
+	const snippetService = new SnippetService(context.extension.extensionPath, context.extension.packageJSON);
+	context.subscriptions.push(vscode.languages.registerDocumentDropEditProvider(selector, new ReverseTextOnDropProvider(snippetService)));
 
 }
 
 class ReverseTextOnDropProvider implements vscode.DocumentDropEditProvider {
+	constructor(private readonly snippetService: SnippetService){}
+
 	async provideDocumentDropEdits(
 		_document: vscode.TextDocument,
 		position: vscode.Position,
@@ -310,134 +290,23 @@ class ReverseTextOnDropProvider implements vscode.DocumentDropEditProvider {
 
 		// try and read the file (do we need to?)
 
-		// Build a snippet to insert
-		const snippet = new vscode.SnippetString();
 		// Adding the reversed text
 		const x = makeIgluURI(text);
 		const [vendor, event, format, version] = x.replace('iglu:', '').split('/');
 		const [model, revision, addition] = version.split('-');
-		const dropFilePath = _document.uri.fsPath;	
+		const dropFilePath = _document.uri.fsPath;
 
-		var snip: string = '';
-		if (_document.languageId === 'javascript'){
-			snip += `
-trackSelfDescribingEvent({
-	event: {
-		schema: '${x}',
-		data: {}
-	}
-});`;
-		}
-		else if (_document.languageId === 'objective-c') {
-			console.log('hi inserting objc code');
-			snip += `
-let event = SelfDescribing(schema: "${x}", payload: []);
-tracker.track(event);
-			`;
-		}
-		else if (_document.languageId === 'java'){
-			// is there a more specific language for Android?
-			snip += 
-`SelfDescribingJson json = new SelfDescribingJson("${x}", data);
-SelfDescribing event = new SelfDescribing(json);
-`;		
-		}
-		else if (_document.languageId === 'csharp') {
-			snip += 
-`
-SelfDescribingJson json = new SelfDescribingJson(\"${x}\", data);
-`
-		}
-		else if (_document.languageId === 'php') {
-			// TODO: this needs a different schema version!
-			let phpSchema = `iglu:${vendor}/${event}/${format}/${model}.${revision}.${addition}`
-			snip +=
-`
-$tracker->trackUnstructEvent(
-    array(
-        "schema" => "${phpSchema}",
-        "data" => array(
-            
-        )
-    )
-);`
-		}
-		else if (_document.languageId === 'cpp'){
-			snip += 
-`
-SelfDescribingJson sdj("${x}", data);
-SelfDescribingEvent sde(sdj);
-Snowplow::get_default_tracker()->track(sde);
-`
-		}
-		else if (_document.languageId === 'ruby') {
-			snip +=
-`
-self_desc_json = SnowplowTracker::SelfDescribingJson.new(
-	"${x}",
-	{}
-)
-tracker.track_self_describing_event(self_desc_json)
-`
-		}
-		else if (_document.languageId === 'scala'){
-			// TODO: this needs to look different!
-			snip +=
-`
-val event = SelfDescribingJson(
-	SchemaKey(${vendor}, ${event}, ${format}, SchemaVer(${model},${revision},${addition})),
-	Json.obj()
-)
-tracker.trackSelfDescribingEvent(event)
-`
-		}
-		else if (_document.languageId === 'python') {
-			snip +=
-`
-tracker.track_self_describing_event(SelfDescribingJson(
-	"${x}",
-	{}
-))
-`
-		}
-		else if (_document.languageId === 'go') {
-			snip += 
-`
-sdj := sp.InitSelfDescribingJson("${x}", data)
-
-tracker.TrackSelfDescribingEvent(sp.SelfDescribingEvent{
-  Event: sdj,
-})
-`
-		}
-		else if (_document.languageId === 'dart') {
-			snip += 
-`
-tracker.track(SelfDescribing(
-    schema: '${x}',
-    data: {}
-));
-`
-		}
-		else if (_document.languageId === 'lua') {
-			snip +=
-`
-tracker:track_self_describing_event(
-	"${x}",
-	{ }
-)
-`		}
-		else {
-			vscode.window.showInformationMessage(`Unable to generate snippet code for language: ${_document.languageId}`);
-		}
-		
+		// Build a snippet to insert
+		let snippet = new vscode.SnippetString();
 		// lookup the appropriate snippet
-
-
-
 		// languageId should probably be .js or .ts or something
 		// and based on this languageId we should select the snippet that we are
 		// interested in!
+		const predefined = this.snippetService.getSnippets(_document.languageId, "Send self-describing JSON");
+		if (predefined && predefined.length == 1) snippet = this.snippetService.evaluate(predefined[0], {
+			vendor, event, format, version, uri: x, model, revision, addition,
+			"iglu:com.example/example/jsonschema/1-0-0": x,
+		});
 
 		// TODO: need to write sdjson snippets for each language
 		// TODO: how do we determine the destination file type / syntax?
@@ -447,13 +316,16 @@ tracker:track_self_describing_event(
 		// into an existing event or not?
 		// we get a line and a character number
 		// but no surrounding text?
-		snippet.appendText([...snip].join(''));
-		// snippet.appendTabstop()
 
-		return { insertText: snippet };
+		// none of the "official" return values from provideDocumentDropEdits treat snippets properly
+		// instead we use insertSnippet to actually get decent indentation & tabstop behavior
+		if (_document === vscode.window.activeTextEditor?.document && snippet.value) {
+			return vscode.window.activeTextEditor.insertSnippet(snippet, position).then((success) => success ? {insertText: ""} : undefined);
+		} else {
+			vscode.window.showInformationMessage(`Unable to generate snippet code for language: ${_document.languageId}`);
+		}
 	}
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() {}
-

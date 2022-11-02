@@ -12,9 +12,9 @@
         "prefix": "sendStructuredEvent",
         "body": [
             "tracker.track_struct_event(category: '${1:category}',",
-            "   action: '${2:action}'",
-            "   property: '${3:property}'",
-            "   value: ${4:1.0}",
+            "\taction: '${2:action}'",
+            "\tproperty: '${3:property}'",
+            "\tvalue: ${4:1.0}",
             ")"
         ]
     },
@@ -23,10 +23,10 @@
         "prefix": "sendSelfDescribingEvent",
         "body": [
             "self_desc_json = SnowplowTracker::SelfDescribingJson.new(",
-            "   \"iglu:com.acme/example/jsonschema/1-0-0",
-            "   {",
-            "       \"value\": 123\"",
-            "   }",
+            "\t\"${1:iglu:com.example/example/jsonschema/1-0-0}\",",
+            "\t{",
+            "\t\t\"value\": 123\"",
+            "\t}",
             ")",
             "tracker.track_self_describing_event(event_json: self_desc_json)"
         ]

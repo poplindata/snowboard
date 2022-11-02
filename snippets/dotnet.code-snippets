@@ -19,12 +19,12 @@
         "prefix": "sendStructuredEvent",
         "body": [
             "t1.Track(new Structured()",
-            "    .SetCategory(\"${1:category}\")",
-            "    .SetAction(\"${2:action}\")",
-            "    .SetLabel(\"${3:label}\")",
-            "    .SetProperty(\"${4:property}\")",
-            "    .SetValue(${5:1.00})",
-            "    .Build());"
+            "\t.SetCategory(\"${1:category}\")",
+            "\t.SetAction(\"${2:action}\")",
+            "\t.SetLabel(\"${3:label}\")",
+            "\t.SetProperty(\"${4:property}\")",
+            "\t.SetValue(${5:1.00})",
+            "\t.Build());"
         ]
     },
     "Send self-describing JSON": {
@@ -36,7 +36,7 @@
             "data.Add(\"${1:Event}\", \"${2:Data}\")",
             "",
             "// We then create a new SelfDescribingJson",
-            "SelfDescribingJson json = new SelfDescribingJson(\"${3:iglu:com.acme/example/jsonschema/1-0-0}\", data);"
+            "SelfDescribingJson json = new SelfDescribingJson(\"${3:iglu:com.example/example/jsonschema/1-0-0}\", data);"
         ]
     },
     "Timing": {
@@ -44,11 +44,11 @@
         "prefix": "timing",
         "body": [
             "t1.Track(new Timing()",
-            "    .SetCategory(\"${1:category}\")",
-            "    .SetVariable(\"${2:variable}\")",
-            "    .SetTiming(${3:1})",
-            "    .SetLabel(\"${7:label}\")",
-            "    .Build());",
+            "\t.SetCategory(\"${1:category}\")",
+            "\t.SetVariable(\"${2:variable}\")",
+            "\t.SetTiming(${3:1})",
+            "\t.SetLabel(\"${7:label}\")",
+            "\t.Build());",
             ""
         ]
     },
@@ -57,9 +57,9 @@
         "prefix": "screenView",
         "body": [
             "t1.Track(new ScreenView()",
-            "    .SetName(\"${1:Screen name}\")",
-            "    .SetId(\"${2:screen123}\")",
-            "    .Build());"
+            "\t.SetName(\"${1:Screen name}\")",
+            "\t.SetId(\"${2:screen123}\")",
+            "\t.Build());"
         ]
     },
     "Ecommerce": {
@@ -67,12 +67,12 @@
         "prefix": "ecommerce_item",
         "body": [
             "EcommerceTransactionItem item = new EcommerceTransactionItem ()",
-            "      .SetSku (\"${1:sku}\")",
-            "      .SetPrice (${2:10.2})",
-            "      .SetQuantity (${3:1})",
-            "      .SetName (\"${4:name}\")",
-            "      .SetCategory (\"${5:category}\")",
-            "      .Build ()"
+            "\t.SetSku (\"${1:sku}\")",
+            "\t.SetPrice (${2:10.2})",
+            "\t.SetQuantity (${3:1})",
+            "\t.SetName (\"${4:name}\")",
+            "\t.SetCategory (\"${5:category}\")",
+            "\t.Build ()"
         ]
     }
 }

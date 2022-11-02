@@ -4,10 +4,10 @@
         "prefix": "initCollector",
         "body": [
             "const tracker = createTracker(",
-            "    '${1:appTracker}',",
-            "    {",
-            "      endpoint: ${2:collector.com},",
-            "    },",
+            "\t'${1:appTracker}',",
+            "\t{",
+            "\t\tendpoint: ${2:collector.com},",
+            "\t},",
             ");"
         ]
     },
@@ -16,8 +16,8 @@
         "prefix": "setSubject",
         "body": [
             "tracker.setSubjectData({",
-            "    userId: '${1:tester}',",
-            "    domainUserId: '${2:5d79770b-015b-4af8-8c91-b2ed6faf4b1e}'",
+            "\tuserId: '${1:tester}',",
+            "\tdomainUserId: '${2:5d79770b-015b-4af8-8c91-b2ed6faf4b1e}'",
             "});"
         ]
     },
@@ -26,11 +26,11 @@
         "prefix": "sendStructuredEvent",
         "body": [
             "tracker.trackStructuredEvent({",
-            "  category: '${1:category}',",
-            "  action: '${2:action}',",
-            "  label: '${3:label}',",
-            "  property: '${4:property}',",
-            "  value: ${5:123.00}",
+            "\tcategory: '${1:category}',",
+            "\taction: '${2:action}',",
+            "\tlabel: '${3:label}',",
+            "\tproperty: '${4:property}',",
+            "\tvalue: ${5:123.00}",
             "});"
         ]
     },
@@ -39,8 +39,8 @@
         "prefix": "sendSelfDescribingEvent",
         "body": [
             "tracker.trackSelfDescribingEvent({",
-            "    schema: '${1:iglu:com.snowplowanalytics.snowplow/link_click/jsonschema/1-0-1}',",
-            "    data: {targetUrl: '${2:http://a-target-url.com}'}",
+            "\tschema: '${1:iglu:com.example/example/jsonschema/1-0-0}',",
+            "\tdata: {targetUrl: '${2:http://a-target-url.com}'}",
             "});"
         ]
     },
@@ -49,10 +49,10 @@
         "prefix": "timing",
         "body": [
             "tracker.trackTimingEvent({",
-            "    category: '${1:category}',",
-            "    variable: '${2:variable}',",
-            "    timing: ${3:5},",
-            "    label: '${4:optional-label}'",
+            "\tcategory: '${1:category}',",
+            "\tvariable: '${2:variable}',",
+            "\ttiming: ${3:5},",
+            "\tlabel: '${4:optional-label}'",
             "});"
         ]
     },
@@ -61,13 +61,13 @@
         "prefix": "screenView",
         "body": [
             "tracker.trackScreenViewEvent({",
-            "    name: '${1:screen_name}',",
-            "    id: '${2:5d79770b-015b-4af8-8c91-b2ed6faf4b1e}',",
-            "    type: '${3:carousel}',",
-            "    previousName: '${4:previous-screen}',",
-            "    previousId: '${5:00d71340-342e-4f3d-b9fd-4de728ffba7a}',",
-            "    previousType: '${6:feed}',",
-            "    transitionType: '${7:basic}'",
+            "\tname: '${1:screen_name}',",
+            "\tid: '${2:5d79770b-015b-4af8-8c91-b2ed6faf4b1e}',",
+            "\ttype: '${3:carousel}',",
+            "\tpreviousName: '${4:previous-screen}',",
+            "\tpreviousId: '${5:00d71340-342e-4f3d-b9fd-4de728ffba7a}',",
+            "\tpreviousType: '${6:feed}',",
+            "\ttransitionType: '${7:basic}'",
             "});"
         ]
     },
@@ -76,11 +76,11 @@
         "prefix": "consentGranted",
         "body": [
             "tracker.trackConsentGrantedEvent({",
-            "    expiry: '${1:2022-01-01T00:00:00Z}',",
-            "    documentId: '${2:doc_id}',",
-            "    version: '${3:1.1}',",
-            "    name: '${4:document_name}',",
-            "    documentDescription: '${5:document_description}'",
+            "\texpiry: '${1:2022-01-01T00:00:00Z}',",
+            "\tdocumentId: '${2:doc_id}',",
+            "\tversion: '${3:1.1}',",
+            "\tname: '${4:document_name}',",
+            "\tdocumentDescription: '${5:document_description}'",
             "});"
         ]
     },
@@ -89,11 +89,11 @@
         "prefix": "consentWithdrawn",
         "body": [
             "tracker.trackConsentWithdrawnEvent({",
-            "    all: ${1:true},",
-            "    documentId: '${2:doc_id}',",
-            "    version: '${3:1.1}',",
-            "    name: '${4:document_name}',",
-            "    documentDescription: '${5:document_description}'",
+            "\tall: ${1:true},",
+            "\tdocumentId: '${2:doc_id}',",
+            "\tversion: '${3:1.1}',",
+            "\tname: '${4:document_name}',",
+            "\tdocumentDescription: '${5:document_description}'",
             "});"
         ]
     },
@@ -102,8 +102,8 @@
         "prefix": "deepLink",
         "body": [
             "tracker.trackDeepLinkReceivedEvent({",
-            "    url: '${1:https://deeplink.com}',",
-            "    referrer: '${2:http://refr.com}',",
+            "\turl: '${1:https://deeplink.com}',",
+            "\treferrer: '${2:http://refr.com}',",
             "});"
         ]
     }

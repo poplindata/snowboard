@@ -4,12 +4,12 @@
         "prefix": "initCollector",
         "body": [
             "newTracker('${1:sp}', '${2:collector.com}', {",
-            "  appId: '${3:app_id}',",
-            "  discoverRootDomain: ${4:true},",
-            "  cookieSameSite: '${5:Lax}', // Recommended",
-            "  contexts: {",
-            "    webPage: ${6:true} // default, can be omitted",
-            "  }",
+            "\tappId: '${3:app_id}',",
+            "\tdiscoverRootDomain: ${4:true},",
+            "\tcookieSameSite: '${5:Lax}', // Recommended",
+            "\tcontexts: {",
+            "\t\twebPage: ${6:true} // default, can be omitted",
+            "\t}",
             "});"
         ]
     },
@@ -25,11 +25,11 @@
         "prefix": "sendStructuredEvent",
         "body": [
             "trackStructEvent({",
-            "  category: '${1:category}',",
-            "  action: '${2:action}',",
-            "  label: '${3:label}',",
-            "  property: '${4:property}',",
-            "  value: ${5:1.0}",
+            "\tcategory: '${1:category}',",
+            "\taction: '${2:action}',",
+            "\tlabel: '${3:label}',",
+            "\tproperty: '${4:property}',",
+            "\tvalue: ${5:1.0}",
             "});"
         ]
     },
@@ -38,12 +38,12 @@
         "prefix": "sendSelfDescribingEvent",
         "body": [
             "trackSelfDescribingEvent({",
-            "  event: {",
-            "    schema: '${1:iglu:com.acme/example/jsonschema/1-0-0}',",
-            "    data: {",
-            "        productId: '${2:ASO01043}',",
-            "    }",
-            "  }",
+            "\tevent: {",
+            "\t\tschema: '${1:iglu:com.example/example/jsonschema/1-0-0}',",
+            "\t\tdata: {",
+            "\t\t\t\tproductId: '${2:ASO01043}',",
+            "\t\t}",
+            "\t}",
             "});"
         ]
     },
@@ -52,9 +52,9 @@
         "prefix": "consentGranted",
         "body": [
             "trackConsentGranted({",
-            "  id: \"${1:document_id}\"",
-            "  version: \"{2:version}\"",
-            "  name: \"${3:document_name}\"",
+            "\tid: \"${1:document_id}\"",
+            "\tversion: \"{2:version}\"",
+            "\tname: \"${3:document_name}\"",
             "})"
         ]
     },
@@ -63,11 +63,11 @@
         "prefix": "consentWithdrawn",
         "body": [
             "trackConsentWithdrawn({",
-            "  all: ${1:false},",
-            "  id: '${2:1234}',",
-            "  version: '${3:5}',",
-            "  name: '${4:document_name}',",
-            "  description: '${5:document_description}'",
+            "\tall: ${1:false},",
+            "\tid: '${2:1234}',",
+            "\tversion: '${3:5}',",
+            "\tname: '${4:document_name}',",
+            "\tdescription: '${5:document_description}'",
             "});"
         ]
     }

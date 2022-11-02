@@ -25,11 +25,11 @@
         "scope": "python",
         "prefix": "sendSelfDescribingEvent",
         "body": [
-            "t.track_self_describing_event(SelfDescribingJson(",
-            "  \"${1:iglu:com.acme/example/jsonschema/1-0-0}\",",
-            "  {",
-            "    \"value\": \"${2:123}\",",
-            "  }",
+            "tracker.track_self_describing_event(SelfDescribingJson(",
+            "\t\"${1:iglu:com.example/example/jsonschema/1-0-0}\",",
+            "\t{",
+            "\t\t\"value\": \"${2:123}\",",
+            "\t}",
             "))"
         ]
     },

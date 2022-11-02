@@ -27,6 +27,7 @@ type DataStructureResource = {
 };
 
 type SchemaProviderElement =
+  | { kind: "workspace"; repoName: string; uri: vscode.Uri }
   | { kind: "static"; baseUrl: string; manifest: string; repoName: string }
   | { kind: "organization"; organizationId: string; organization: string }
   | { kind: "vendor"; organizationId: string; vendor: string }
@@ -53,63 +54,144 @@ type SchemaProviderElement =
     };
 
 export class SchemasProvider
-  implements vscode.TreeDataProvider<SchemaProviderElement>
+  implements vscode.TreeDataProvider<string>, vscode.Disposable
 {
   private static readonly _schemas: Map<string, DataStructureResource> =
     new Map();
 
-  private _onDidChangeTreeData = new vscode.EventEmitter<void>();
+  private static readonly elementCache: Map<string, SchemaProviderElement> =
+    new Map();
+
+  private _onDidChangeTreeData = new vscode.EventEmitter<string | void>();
+  private _disposable: vscode.Disposable;
 
   constructor(private readonly provider: AuthenticationProvider) {
-    this.provider.onDidChangeSessions(() => this._onDidChangeTreeData.fire());
+    const watcher = vscode.workspace.createFileSystemWatcher(
+      "**/*/jsonschema/*-*-*"
+    );
+    const keyUpdate = (prefix: string) => () =>
+      Array.from(SchemasProvider.elementCache.keys())
+        .filter((k) => k.startsWith(prefix))
+        .forEach((k) => this._onDidChangeTreeData.fire(k));
+
+    watcher.onDidChange(keyUpdate("workspace."));
+    watcher.onDidCreate(keyUpdate("workspace."));
+    watcher.onDidDelete(keyUpdate("workspace."));
+
+    this._disposable = vscode.Disposable.from(
+      vscode.workspace.onDidChangeWorkspaceFolders(() =>
+        this._onDidChangeTreeData.fire()
+      ),
+      this.provider.onDidChangeSessions(() => this._onDidChangeTreeData.fire()),
+      watcher
+    );
+  }
+
+  public dispose() {
+    this._disposable.dispose();
   }
 
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
-  getTreeItem(element: SchemaProviderElement): vscode.TreeItem {
+  private idForElement(element: SchemaProviderElement): string {
+    let id: string;
+    switch (element.kind) {
+      case "workspace":
+        id = [element.kind, element.repoName].join(".");
+        break;
+      case "static":
+        id = [element.kind, element.baseUrl].join(".");
+        break;
+      case "organization":
+        id = [element.kind, element.organizationId].join(".");
+        break;
+      case "vendor":
+        id = [element.kind, element.organizationId, element.vendor].join(".");
+        break;
+      case "name":
+        id = [
+          element.kind,
+          element.organizationId,
+          element.vendor,
+          element.name,
+        ].join(".");
+        break;
+      case "format":
+        id = [
+          element.kind,
+          element.organizationId,
+          element.vendor,
+          element.name,
+          element.format,
+        ].join(".");
+        break;
+      case "version":
+        id = [
+          element.kind,
+          element.organizationId,
+          element.contentHash || [element.vendor, element.name].join("."),
+          element.version,
+          element.env,
+        ].join(".");
+        break;
+    }
+
+    if (!SchemasProvider.elementCache.has(id))
+      SchemasProvider.elementCache.set(id, element);
+    return id;
+  }
+
+  getTreeItem(elementId: string): vscode.TreeItem {
+    const element = SchemasProvider.elementCache.get(elementId)!;
+
     const { Collapsed, Expanded, None } = vscode.TreeItemCollapsibleState;
     const buildTI = (props: Partial<vscode.TreeItem>) =>
-      Object.assign(new vscode.TreeItem("", Expanded), props);
+      Object.assign(
+        new vscode.TreeItem("", Expanded),
+        { id: this.idForElement(element) },
+        props
+      );
+
     switch (element.kind) {
+      case "workspace":
+        return buildTI({
+          label: element.repoName,
+        });
       case "static":
         return buildTI({
           label: element.repoName,
           description: element.baseUrl,
-          id: [element.baseUrl].join("."),
         });
       case "organization":
         return buildTI({
           label: element.organization,
           description: element.organizationId,
-          id: [element.organizationId].join("."),
         });
       case "vendor":
         return buildTI({
           label: element.vendor,
           collapsibleState: Collapsed,
-          id: [element.organizationId, element.vendor].join("."),
         });
       case "name":
         return buildTI({
           label: element.name,
           collapsibleState: Collapsed,
-          id: [element.organizationId, element.vendor, element.name].join("."),
         });
       case "format":
         return buildTI({
           label: element.format,
-          id: [
-            element.organizationId,
-            element.vendor,
-            element.name,
-            element.format,
-          ].join("."),
         });
       case "version":
         const igluUri = `iglu:${element.vendor}/${element.name}/${element.format}/${element.version}`;
         let command: vscode.Command;
 
-        if (element.contentHash) {
+        if (element.env === "LOCAL") {
+          command = {
+            title: "View Iglu Schema",
+            command: "vscode.open",
+            arguments: [element.contentHash, { preview: true }, igluUri],
+          };
+        } else if (element.contentHash) {
           const consoleUri = vscode.Uri.from({
             scheme: TextDocumentContentProvider.scheme,
             authority: element.organizationId,
@@ -147,24 +229,17 @@ export class SchemasProvider
           label: element.version,
           collapsibleState: None,
           description: `${element.schemaType || "schema"} | ${element.env}`,
-          id: [
-            element.organizationId,
-            element.contentHash || [element.vendor, element.name].join("."),
-            element.version,
-            element.env,
-          ].join("."),
           command,
         });
     }
   }
 
-  async getChildren(
-    element?: SchemaProviderElement
-  ): Promise<SchemaProviderElement[]> {
-    if (!element) {
-      return this.getRootChildren();
+  async getChildren(elementId?: string): Promise<string[]> {
+    if (!elementId) {
+      return (await this.getRootChildren()).map(this.idForElement);
     } else {
-      return this.getNodeChildren(element);
+      const element = SchemasProvider.elementCache.get(elementId)!;
+      return (await this.getNodeChildren(element)).map(this.idForElement);
     }
   }
 
@@ -176,6 +251,27 @@ export class SchemasProvider
       manifest: "",
     };
 
+    const schemaFiles = await vscode.workspace.findFiles(
+      "**/*/jsonschema/*-*-*"
+    );
+    const workspaceFolders = vscode.workspace.workspaceFolders || [
+      {
+        name: "No Active Folder/Workspace",
+        index: 0,
+        uri: vscode.Uri.parse("file:/"),
+      },
+    ];
+
+    const workspaces: SchemaProviderElement[] = workspaceFolders
+      .filter((wsf) =>
+        schemaFiles.some((sf) => sf.toString().startsWith(wsf.uri.toString()))
+      )
+      .map((ws) => ({
+        kind: "workspace",
+        repoName: ws.name,
+        uri: ws.uri,
+      }));
+
     const sessions = await this.provider.getSessions();
     if (!sessions.length) {
       const session = await vscode.authentication.getSession(
@@ -184,31 +280,35 @@ export class SchemasProvider
       );
       if (session)
         return [
-          igluCentral,
+          ...workspaces,
           {
             kind: "organization",
             organizationId: session.id,
             organization: session.account.label,
           },
+          igluCentral,
         ];
-      else return [igluCentral];
+      else return [...workspaces, igluCentral];
     }
 
-    return sessions
-      .map(
+    return workspaces.concat(
+      sessions.map(
         ({ id, account: { label } }): SchemaProviderElement => ({
           kind: "organization",
           organizationId: id,
           organization: label,
         })
-      )
-      .concat([igluCentral]);
+      ),
+      [igluCentral]
+    );
   }
 
   private async getNodeChildren(
     element: SchemaProviderElement
   ): Promise<SchemaProviderElement[]> {
     switch (element.kind) {
+      case "workspace":
+        return this.getWorkspaceNodeChildren(element);
       case "static":
         return this.getStaticNodeChildren(element);
       case "organization":
@@ -219,9 +319,80 @@ export class SchemasProvider
         return this.getNameNodeChildren(element);
       case "format":
         return this.getFormatNodeChildren(element);
-      default:
+      case "version":
         return [];
     }
+  }
+
+  private async getWorkspaceNodeChildren(
+    element: Extract<SchemaProviderElement, { kind: "workspace" }>
+  ): Promise<SchemaProviderElement[]> {
+    const schemaFiles = await vscode.workspace.findFiles(
+      "**/*/jsonschema/*-*-*"
+    );
+    const urisForFolder = schemaFiles.filter((sf) =>
+      sf.toString().startsWith(element.uri.toString())
+    );
+
+    const contents = await Promise.all(
+      urisForFolder.map((fsUri) =>
+        vscode.workspace.fs.readFile(fsUri).then((bytes) => ({
+          fsUri,
+          contents: Buffer.from(bytes).toString("utf-8"),
+        }))
+      )
+    );
+
+    const localVendors: Set<string> = new Set();
+
+    contents.forEach(({ fsUri, contents }) => {
+      let jsonContents;
+      try {
+        jsonContents = JSON.parse(contents);
+        if (
+          typeof jsonContents !== "object" ||
+          !jsonContents ||
+          !("self" in jsonContents)
+        )
+          return;
+      } catch {
+        return;
+      }
+
+      const { vendor, name, format, version } = jsonContents["self"];
+
+      const sha256 = createHash("sha256");
+      sha256.update([element.repoName, vendor, name].join("-"));
+      const hash = sha256.digest("hex");
+
+      const ds: DataStructureResource = {
+        organizationId: element.repoName,
+        vendor,
+        name,
+        format,
+        hash,
+        meta: {},
+        deployments: [],
+      };
+
+      ds.deployments.push({
+        version,
+        patchLevel: 1,
+        env: "LOCAL",
+        contentHash: fsUri.toString(),
+      });
+
+      localVendors.add(vendor);
+      SchemasProvider._schemas.set(hash, ds);
+    });
+
+    return Array.from(localVendors.values())
+      .sort()
+      .map((vendor) => ({
+        kind: "vendor",
+        organizationId: element.repoName,
+        vendor,
+      }));
   }
 
   private async getStaticNodeChildren(

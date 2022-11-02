@@ -20,10 +20,10 @@
         "prefix": "sendStructuredEvent",
         "body": [
             "tracker.TrackStructEvent(sp.StructuredEvent{",
-            "  Category: sp.NewString(\"${1:category}\"),",
-            "  Action: sp.NewString(\"${2:action}\"),",
-            "  Property: sp.NewString(\"${3:property}\"),",
-            "  Value: sp.NewFloat64(${4:1}),",
+            "\tCategory: sp.NewString(\"${1:category}\"),",
+            "\tAction: sp.NewString(\"${2:action}\"),",
+            "\tProperty: sp.NewString(\"${3:property}\"),",
+            "\tValue: sp.NewFloat64(${4:1}),",
             "})"
         ]
     },
@@ -35,7 +35,7 @@
             "sdj := sp.InitSelfDescribingJson(\"${4:iglu:com.example/example/jsonschema/1-0-0}\", data)",
             "",
             "tracker.TrackSelfDescribingEvent(sp.SelfDescribingEvent{",
-            "  Event: sdj",
+            "\tEvent: sdj",
             "})"
         ]
     },
@@ -44,9 +44,9 @@
         "prefix": "timing",
         "body": [
             "tracker.TrackTiming(sp.TimingEvent{",
-            "  Category: sp.NewString(\"${1:category}\"),",
-            "  Variable: sp.NewString(\"${2:variable}\"),",
-            "  Timing: sp.NewInt64(${3:123}),",
+            "\tCategory: sp.NewString(\"${1:category}\"),",
+            "\tVariable: sp.NewString(\"${2:variable}\"),",
+            "\tTiming: sp.NewInt64(${3:123}),",
             "})"
         ]
     },
@@ -55,7 +55,7 @@
         "prefix": "screenView",
         "body": [
             "tracker.TrackScreenView(sp.ScreenViewEvent{",
-            "  Id: sp.NewString(\"${1:screen_id}\"),",
+            "\tId: sp.NewString(\"${1:screen_id}\"),",
             "})"
         ]
     },
@@ -64,31 +64,31 @@
         "prefix": "ecommerce",
         "body": [
             "items := []sp.EcommerceTransactionItemEvent{",
-            "  sp.EcommerceTransactionItemEvent{",
-            "    Sku: sp.NewString(\"${1:pbz0026}\"),",
-            "    Price: sp.NewFloat64(${2:20}),",
-            "    Quantity: sp.NewInt64(${3:1}),",
-            "  },",
-            "  sp.EcommerceTransactionItemEvent{",
-            "    Sku: sp.NewString(\"${4:pbz0038}\"),",
-            "    Price: sp.NewFloat64(${5:15}),",
-            "    Quantity: sp.NewInt64(${6:1}),",
-            "    Name: sp.NewString(\"${7:red hat}\"),",
-            "    Category: sp.NewString(\"${8:menswear}\"),",
-            "  },",
+            "\tsp.EcommerceTransactionItemEvent{",
+            "\t\tSku: sp.NewString(\"${1:pbz0026}\"),",
+            "\t\tPrice: sp.NewFloat64(${2:20}),",
+            "\t\tQuantity: sp.NewInt64(${3:1}),",
+            "\t},",
+            "\tsp.EcommerceTransactionItemEvent{",
+            "\t\tSku: sp.NewString(\"${4:pbz0038}\"),",
+            "\t\tPrice: sp.NewFloat64(${5:15}),",
+            "\t\tQuantity: sp.NewInt64(${6:1}),",
+            "\t\tName: sp.NewString(\"${7:red hat}\"),",
+            "\t\tCategory: sp.NewString(\"${8:menswear}\"),",
+            "\t},",
             "}",
             "",
             "tracker.TrackEcommerceTransaction(sp.EcommerceTransactionEvent{",
-            "  OrderId: sp.NewString(\"${9:6a8078be}\"),",
-            "  TotalValue: sp.NewFloat64(${10:35}),",
-            "  Affiliation: sp.NewString(\"${11:some-affiliation}\"),",
-            "  TaxValue: sp.NewFloat64(${12:6.12}),",
-            "  Shipping: sp.NewFloat64(${13:30}),",
-            "  City: sp.NewString(\"${14:Dijon}\"),",
-            "  State: sp.NewString(\"${15:Bourgogne}\"),",
-            "  Country: sp.NewString(\"${16:France}\"),",
-            "  Currency: sp.NewString(\"${17:EUR}\"),",
-            "  Items: items,",
+            "\tOrderId: sp.NewString(\"${9:6a8078be}\"),",
+            "\tTotalValue: sp.NewFloat64(${10:35}),",
+            "\tAffiliation: sp.NewString(\"${11:some-affiliation}\"),",
+            "\tTaxValue: sp.NewFloat64(${12:6.12}),",
+            "\tShipping: sp.NewFloat64(${13:30}),",
+            "\tCity: sp.NewString(\"${14:Dijon}\"),",
+            "\tState: sp.NewString(\"${15:Bourgogne}\"),",
+            "\tCountry: sp.NewString(\"${16:France}\"),",
+            "\tCurrency: sp.NewString(\"${17:EUR}\"),",
+            "\tItems: items,",
             "})"
         ]
     }
