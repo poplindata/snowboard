@@ -241,12 +241,16 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const consoleAP = new AuthenticationProvider(context);
 	const textDocProvider = new TextDocumentContentProvider(consoleAP);
-	const schemasProvider = new SchemasProvider(consoleAP);
+	const schemasProvider = new SchemasProvider(consoleAP, textDocProvider);
 
 	context.subscriptions.push(consoleAP);
 	context.subscriptions.push(
 		vscode.workspace.registerTextDocumentContentProvider(
 			TextDocumentContentProvider.scheme,
+			textDocProvider,
+		),
+		vscode.languages.registerDocumentLinkProvider(
+			{ scheme: "file" },
 			textDocProvider,
 		)
 	);
@@ -264,7 +268,7 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(igluProvider);
 
 
-	const selector: vscode.DocumentSelector = { language: '*' };
+	const selector: vscode.DocumentSelector = { language: '*', scheme: '*' };
 
 
 	const snippetService = new SnippetService(context.extension.extensionPath, context.extension.packageJSON);

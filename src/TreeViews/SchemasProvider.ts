@@ -53,18 +53,33 @@ type SchemaProviderElement =
       schemaType: DataStructureResource["meta"]["schemaType"];
     };
 
-export class SchemasDragAndDropController implements vscode.TreeDragAndDropController<string> {
+export class SchemasDragAndDropController
+  implements vscode.TreeDragAndDropController<string>
+{
   dropMimeTypes: readonly string[] = [];
-  dragMimeTypes: readonly string[] = ["application/schema+json", "application/json", "text/uri-list"];
+  dragMimeTypes: readonly string[] = [
+    "application/schema+json",
+    "application/json",
+    "text/uri-list",
+  ];
 
   constructor(private readonly provider: SchemasProvider) {}
 
-  handleDrag(source: readonly string[], dataTransfer: vscode.DataTransfer, token: vscode.CancellationToken): void {
-    const schemaUris = source.map((s) => this.provider.getTreeItem(s).resourceUri);
-    const uriList = schemaUris.filter(Boolean).map((uri) => uri!.toString()).join("\n");
+  handleDrag(
+    source: readonly string[],
+    dataTransfer: vscode.DataTransfer,
+    token: vscode.CancellationToken
+  ): void {
+    const schemaUris = source.map(
+      (s) => this.provider.getTreeItem(s).resourceUri
+    );
+    const uriList = schemaUris
+      .filter(Boolean)
+      .map((uri) => uri!.toString())
+      .join("\n");
     dataTransfer.set("text/uri-list", new vscode.DataTransferItem(uriList));
   }
-};
+}
 
 export class SchemasProvider
   implements vscode.TreeDataProvider<string>, vscode.Disposable
@@ -78,7 +93,10 @@ export class SchemasProvider
   private _onDidChangeTreeData = new vscode.EventEmitter<string | void>();
   private _disposable: vscode.Disposable;
 
-  constructor(private readonly provider: AuthenticationProvider) {
+  constructor(
+    private readonly provider: AuthenticationProvider,
+    private readonly textDocProvider: TextDocumentContentProvider
+  ) {
     const watcher = vscode.workspace.createFileSystemWatcher(
       "**/*/jsonschema/*-*-*"
     );
@@ -247,6 +265,8 @@ export class SchemasProvider
             arguments: [staticUri, { preview: true }, igluUri],
           };
         }
+
+        this.textDocProvider.addToResolver(resourceUri, { self: element });
 
         return buildTI({
           label: element.version,
