@@ -7,9 +7,10 @@ import JsonSchemaFaker from 'json-schema-faker';
 import faker from '@faker-js/faker';
 import fetch from 'isomorphic-fetch';
 
-import { EnvironmentsProvider, SchemasProvider } from './TreeViews';
+import { EnvironmentsProvider, SchemasProvider, SchemasDragAndDropController } from './TreeViews';
 import { AuthenticationProvider, TextDocumentContentProvider } from './SnowplowConsole';
 import { SnippetService } from './SnippetService';
+import { SchemaService } from './SchemaService';
 
 function makeIgluURI(path: string) {
 	// make Iglu uri from local file path
@@ -237,39 +238,46 @@ export function activate(context: vscode.ExtensionContext) {
 				schemaCompletion
 			];
 		}
-	});
+	}, ":");
 
 	const consoleAP = new AuthenticationProvider(context);
+	const schemaService = new SchemaService(consoleAP, TextDocumentContentProvider.scheme);
+	const textDocProvider = new TextDocumentContentProvider(schemaService);
+	const schemasProvider = new SchemasProvider(schemaService);
 
-	context.subscriptions.push(consoleAP);
-	context.subscriptions.push(
-		vscode.workspace.registerTextDocumentContentProvider(
-			TextDocumentContentProvider.scheme,
-			new TextDocumentContentProvider(consoleAP),
-		)
-	);
 	context.subscriptions.push(
 		vscode.window.createTreeView("schemas", {
-			treeDataProvider: new SchemasProvider(consoleAP),
+			treeDataProvider: schemasProvider,
+			dragAndDropController: new SchemasDragAndDropController(schemasProvider),
 		}),
 		vscode.window.createTreeView("environments", {
 			treeDataProvider: new EnvironmentsProvider(consoleAP),
 		}),
+		vscode.workspace.registerTextDocumentContentProvider(
+			TextDocumentContentProvider.scheme,
+			textDocProvider,
+		),
+		vscode.languages.registerDocumentLinkProvider(
+			{ scheme: "file" },
+			textDocProvider,
+		),
+		schemaService,
+		consoleAP,
 	);
 
 	context.subscriptions.push(igluProvider);
 
 
-	const selector: vscode.DocumentSelector = { language: '*' };
+	const selector: vscode.DocumentSelector = { language: '*', scheme: '*' };
 
 
 	const snippetService = new SnippetService(context.extension.extensionPath, context.extension.packageJSON);
-	context.subscriptions.push(vscode.languages.registerDocumentDropEditProvider(selector, new ReverseTextOnDropProvider(snippetService)));
+	context.subscriptions.push(vscode.languages.registerDocumentDropEditProvider(selector, new ReverseTextOnDropProvider(snippetService, textDocProvider)));
 
 }
 
 class ReverseTextOnDropProvider implements vscode.DocumentDropEditProvider {
-	constructor(private readonly snippetService: SnippetService){}
+	constructor(private readonly snippetService: SnippetService, private readonly docProvider: TextDocumentContentProvider){}
 
 	async provideDocumentDropEdits(
 		_document: vscode.TextDocument,
@@ -277,24 +285,55 @@ class ReverseTextOnDropProvider implements vscode.DocumentDropEditProvider {
 		dataTransfer: vscode.DataTransfer,
 		token: vscode.CancellationToken
 	): Promise<vscode.DocumentDropEdit | undefined> {
+		let vendor: string, event: string, format: string, version: string, uri: string;
+
 		// Check the data transfer to see if we have some kind of text data
-		const dataTransferItem = dataTransfer.get('text') ?? dataTransfer.get('text/plain');
-		if (!dataTransferItem) {
-			return undefined;
+
+		let dataTransferItem = dataTransfer.get('text') ?? dataTransfer.get('text/plain');
+		if (dataTransferItem) {
+			const text = await dataTransferItem.asString();
+
+			if (token.isCancellationRequested) return;
+
+			// try and read the file (do we need to?)
+
+			// Adding the reversed text
+			uri = makeIgluURI(text);
+			[vendor, event, format, version] = uri.replace('iglu:', '').split('/');
+		} else {
+			dataTransferItem = dataTransfer.get("text/uri-list");
+			if (!dataTransferItem) return;
+
+			const uriList = (await dataTransferItem.asString()).split("\n");
+			if (token.isCancellationRequested) return;
+
+			let hit: any | undefined = undefined;
+
+			for (const dragUri of uriList) {
+				if (dragUri.startsWith(TextDocumentContentProvider.scheme)) {
+					try {
+						const content = await this.docProvider.provideTextDocumentContent(vscode.Uri.parse(dragUri), token);
+						const igluSchema = JSON.parse(content);
+						if (typeof igluSchema === "object" && igluSchema && "self" in igluSchema) {
+							hit = igluSchema;
+							console.log("got schema for", dragUri, hit);
+							break;
+						}
+					} catch {
+						console.error("failed to parse json from", dragUri);
+						continue;
+					}
+					if (token.isCancellationRequested) return;
+				}
+			}
+
+			if (hit) {
+				({vendor, name: event, format, version} = hit["self"]);
+				uri = makeIgluURI([vendor, event, format, version].join("/"));
+			} else return;
 		}
 
-		const text = await dataTransferItem.asString();
-		if (token.isCancellationRequested) {
-			return undefined;
-		}
-
-		// try and read the file (do we need to?)
-
-		// Adding the reversed text
-		const x = makeIgluURI(text);
-		const [vendor, event, format, version] = x.replace('iglu:', '').split('/');
 		const [model, revision, addition] = version.split('-');
-		const dropFilePath = _document.uri.fsPath;
 
 		// Build a snippet to insert
 		let snippet = new vscode.SnippetString();
@@ -304,8 +343,8 @@ class ReverseTextOnDropProvider implements vscode.DocumentDropEditProvider {
 		// interested in!
 		const predefined = this.snippetService.getSnippets(_document.languageId, "Send self-describing JSON");
 		if (predefined && predefined.length == 1) snippet = this.snippetService.evaluate(predefined[0], {
-			vendor, event, format, version, uri: x, model, revision, addition,
-			"iglu:com.example/example/jsonschema/1-0-0": x,
+			vendor, event, format, version, uri, model, revision, addition,
+			"iglu:com.example/example/jsonschema/1-0-0": uri,
 		});
 
 		// TODO: need to write sdjson snippets for each language
