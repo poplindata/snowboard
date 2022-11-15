@@ -10,6 +10,7 @@ import fetch from 'isomorphic-fetch';
 import { EnvironmentsProvider, SchemasProvider, SchemasDragAndDropController } from './TreeViews';
 import { AuthenticationProvider, TextDocumentContentProvider } from './SnowplowConsole';
 import { SnippetService } from './SnippetService';
+import { SchemaService } from './SchemaService';
 
 function makeIgluURI(path: string) {
 	// make Iglu uri from local file path
@@ -240,20 +241,9 @@ export function activate(context: vscode.ExtensionContext) {
 	}, ":");
 
 	const consoleAP = new AuthenticationProvider(context);
-	const textDocProvider = new TextDocumentContentProvider(consoleAP);
-	const schemasProvider = new SchemasProvider(consoleAP, textDocProvider);
-
-	context.subscriptions.push(consoleAP);
-	context.subscriptions.push(
-		vscode.workspace.registerTextDocumentContentProvider(
-			TextDocumentContentProvider.scheme,
-			textDocProvider,
-		),
-		vscode.languages.registerDocumentLinkProvider(
-			{ scheme: "file" },
-			textDocProvider,
-		)
-	);
+	const schemaService = new SchemaService(consoleAP, TextDocumentContentProvider.scheme);
+	const textDocProvider = new TextDocumentContentProvider(schemaService);
+	const schemasProvider = new SchemasProvider(schemaService);
 
 	context.subscriptions.push(
 		vscode.window.createTreeView("schemas", {
@@ -263,6 +253,16 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.createTreeView("environments", {
 			treeDataProvider: new EnvironmentsProvider(consoleAP),
 		}),
+		vscode.workspace.registerTextDocumentContentProvider(
+			TextDocumentContentProvider.scheme,
+			textDocProvider,
+		),
+		vscode.languages.registerDocumentLinkProvider(
+			{ scheme: "file" },
+			textDocProvider,
+		),
+		schemaService,
+		consoleAP,
 	);
 
 	context.subscriptions.push(igluProvider);

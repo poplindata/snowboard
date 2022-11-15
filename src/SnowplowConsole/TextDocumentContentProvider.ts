@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { AuthenticationProvider } from "./AuthenticationProvider";
+import { SchemaService } from "../SchemaService";
 
 const CONSOLE_URI_SCHEMA = "iglu+console" as const;
 const IGLU_PATTERN =
@@ -15,22 +15,11 @@ const EMPTY_SCHEMA = {
 };
 
 export class TextDocumentContentProvider
-  implements
-    vscode.TextDocumentContentProvider,
-    vscode.DocumentLinkProvider,
-    vscode.Disposable
+  implements vscode.TextDocumentContentProvider, vscode.DocumentLinkProvider
 {
   public static scheme = CONSOLE_URI_SCHEMA;
 
-  private resolver: Map<string, Set<string>>;
-
-  constructor(private readonly _authProvider: AuthenticationProvider) {
-    this.resolver = new Map();
-  }
-
-  dispose() {
-    this.resolver.clear();
-  }
+  constructor(private readonly schemaService: SchemaService) {}
 
   provideDocumentLinks(
     document: vscode.TextDocument,
@@ -59,86 +48,70 @@ export class TextDocumentContentProvider
       ]);
   }
 
-  public addToResolver(uri: vscode.Uri, schema: unknown): void {
-    if (typeof schema === "object" && schema != null && "self" in schema) {
-      const { self } = schema as Record<"self", unknown>;
-
-      if (typeof self === "object" && self) {
-        const { vendor, name, format, version } = self as Record<
-          string,
-          unknown
-        >;
-        const iglu = `${TextDocumentContentProvider.scheme}:${vendor}/${name}/${format}/${version}`;
-
-        const results = this.resolver.get(iglu) || new Set();
-
-        results.add(uri.toString());
-
-        this.resolver.set(iglu, results);
-      }
-    }
-  }
-
   async provideTextDocumentContent(
     uri: vscode.Uri,
     token: vscode.CancellationToken
   ): Promise<string> {
-    const organizationId = uri.authority;
+    let selector: any;
 
-    if (organizationId) {
-      const [_, schemaHash, format, version] = uri.path.split("/");
-      const env = uri.query || "";
-
-      const schema = await this._authProvider.consoleApiRequest(
-        `/data-structures/v1/${schemaHash}/versions/${version}${env}`,
-        organizationId
+    if (
+      /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(
+        uri.authority
+      )
+    ) {
+      const path = uri.path.split("/");
+      console.assert(
+        path.length === 4,
+        "unexpected path components resolving console uri",
+        uri
       );
+      const [_, contentHash, format, version] = path;
+      selector = {
+        registry: { kind: "organization", id: uri.authority },
+        igluUri: { format, version },
+        hash: contentHash,
+      };
+    } else if (uri.authority) {
+      const path = uri.path.split("/").reverse();
+      const [version, format, name, vendor] = path;
 
-      this.addToResolver(uri, schema);
-
-      return JSON.stringify(schema, null, 2);
-    } else if (uri.path && uri.fragment) {
-      const [_, vendor, name, format, version] = uri.path.split("/");
-      const staticUri = vscode.Uri.joinPath(
-        vscode.Uri.parse(uri.fragment),
-        vendor,
-        name,
-        format,
-        version
-      );
-
-      const schema = await fetch(staticUri.toString()).then((r) =>
-        r.ok ? r.json() : Promise.reject(r)
-      );
-      this.addToResolver(uri, schema);
-      return JSON.stringify(schema, null, 2);
-    } else if (uri.fragment) {
-      const schema = JSON.parse(decodeURIComponent(uri.fragment));
-      this.addToResolver(uri, schema);
-      return JSON.stringify(schema, null, 2);
+      selector = {
+        registry: {
+          kind: "static",
+          id: (orgId: string) => orgId.includes(uri.authority),
+        },
+        igluUri: { vendor, name, format, version },
+      };
     } else {
-      const options = this.resolver.get(uri.toString());
-      if (options) {
-        const option = Array.from(options.values())[0];
-        if (option) {
-          return this.provideTextDocumentContent(
-            vscode.Uri.parse(option),
-            token
-          );
-        }
-
-        const [vendor, name, format, version] = uri.path.split("/");
-        return JSON.stringify(
-          {
-            self: { vendor, name, format, version },
-            ...EMPTY_SCHEMA,
-          },
-          null,
-          2
-        );
-      } else {
-        return "";
-      }
+      selector = { igluUri: uri.with({ scheme: "iglu" }).toString() };
     }
+
+    let cancellationDisposal: vscode.Disposable | undefined = undefined;
+    const cancel = new Promise(
+      (_, reject) =>
+        (cancellationDisposal = token.onCancellationRequested(reject))
+    ).finally(() => cancellationDisposal && cancellationDisposal.dispose());
+
+    await Promise.race([this.schemaService.discover(), cancel]);
+
+    const matches = this.schemaService.getSchemas(selector);
+    const exacts = matches.filter(
+      (sd) => !uri.query || (sd.env && uri.query && uri.query.includes(sd.env))
+    );
+
+    return Promise.race([
+      Promise.any(exacts.map((sd) => this.schemaService.resolve(sd))),
+      cancel,
+    ])
+      .catch(() => ({
+        self: {
+          vendor: "vendor",
+          name: "name",
+          format: "jsonschema",
+          version: "1-0-0",
+        },
+        ...EMPTY_SCHEMA,
+      }))
+      .then((schema) => JSON.stringify(schema, null, 2));
   }
 }
