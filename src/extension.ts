@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import JsonSchemaFaker from 'json-schema-faker';
-import faker from '@faker-js/faker';
+import {faker} from '@faker-js/faker';
 import fetch from 'isomorphic-fetch';
 
 import { EnvironmentsProvider, SchemasProvider, SchemasDragAndDropController } from './TreeViews';
