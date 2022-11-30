@@ -21,7 +21,7 @@
     "onCommand:snowboard.newSchema",
     "onCommand:snowboard.openMicroDebugger",
     "onView:schemas",
-    "*"
+    "workspaceContains:**/jsonschema/*-*-*"
   ],
   "main": "./out/extension.js",
   "contributes": {
