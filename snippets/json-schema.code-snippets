@@ -1,117 +1,122 @@
 {
-	"Snowboard: Number property": {
+    "Snowboard: Generic property": {
+        "prefix": ["add property"],
+        "body": ["\"${1:property_name}\": {", "\t\"type\": \"${2|number,integer,string,boolean|}\",", "\t\"description\": \"${3:Description of ${1} goes here}\"", "}${0}"],
+        "description": "Add an untyped property"
+    },
+    "Snowboard: Number property": {
         "prefix": ["number"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": \"number\",", "\t\"description\": \"${2:Description goes here}\"", "}${0}"],
+        "body": ["\"${1:property_name}\": {", "\t\"type\": \"number\",", "\t\"description\": \"${2:Description of ${1} goes here}\"", "}${0}"],
         "description": "A property of type 'number'."
     },
     "Snowboard: String property": {
         "prefix": ["string"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": \"string\",", "\t\"description\": \"${2:Description goes here}\"", "}${0}"],
+        "body": ["\"${1:property_name}\": {", "\t\"type\": \"string\",", "\t\"description\": \"${2:Description of ${1} goes here}\"", "}${0}"],
         "description": "A property of type 'string'."
     },
     "Snowboard: Integer property": {
         "prefix": ["integer"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": \"integer\",", "\t\"description\": \"${2:Description goes here}\"", "}${0}"],
+        "body": ["\"${1:property_name}\": {", "\t\"type\": \"integer\",", "\t\"description\": \"${2:Description of ${1} goes here}\"", "}${0}"],
         "description": "A property of type 'integer'."
     },
     "Snowboard: Boolean property": {
         "prefix": ["boolean"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": \"boolean\",", "\t\"description\": \"${2:Description goes here}\"", "}${0}"],
-        "description": "A for loop."
+        "body": ["\"${1:property_name}\": {", "\t\"type\": \"boolean\",", "\t\"description\": \"${2:Description of ${1} goes here}\"", "}${0}"],
+        "description": "A property of type boolean."
     },
-    "Snowboard: Array property": {
+    "Snowboard: Array property (untyped)": {
         "prefix": ["array"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": \"array\",", "\t\"description\": \"${2:Description goes here}\",", "\t\"items\": {", "\t\t\"type\": \"${3:type}\"", "\t}", "}${0}"],
-        "description": "An (untyped) array"
+        "body": ["\"${1:property_name}\": {", "\t\"type\": \"array\",", "\t\"description\": \"${2:Description of ${1} goes here}\",", "\t\"items\": {", "\t\t\"type\": \"${3|number,integer,string,boolean,array,object|}\",", "\t\t\"description\": \"${4:Description goes here}\"", "\t}", "}${0}"],
+        "description": "An (untyped) array property"
     },
     "Snowboard: Object property": {
         "prefix": ["object"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": \"object\",", "\t\"description\": \"${2:Description goes here}\",", "\t\"properties\": {", "\t\t${3}", "\t},", "\t\"additionalProperties\": ${4:false}", "}${0}"],
-        "description": "An object"
+        "body": ["\"${1:property_name}\": {", "\t\"type\": \"object\",", "\t\"description\": \"${2:Description of ${1} goes here}\",", "\t\"properties\": {", "\t\t${0}", "\t},", "\t\"additionalProperties\": ${3|false,true|},", "\t\"required\": []", "}"],
+        "description": "A property of type object"
     },
     "Snowboard: Datetime / timestamp property": {
         "prefix": ["date-time"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": \"string\",", "\t\"format\": \"date-time\",", "\t\"description\": \"${2:Description goes here}\"", "}${0}"],
-        "description": "A datetime (string) property"
+        "body": ["\"${1:property_name}\": {", "\t\"type\": \"string\",", "\t\"format\": \"date-time\",", "\t\"description\": \"${2:Description of ${1} goes here}\"", "}${0}"],
+        "description": "A property of type string formatted as date-time"
     },
     "Snowboard: URI property": {
         "prefix": ["uri"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": \"string\",", "\t\"format\": \"uri\",", "\t\"description\": \"${2:Description goes here}\"", "}${0}"],
-        "description": "A uri property"
+        "body": ["\"${1:property_name}\": {", "\t\"type\": \"string\",", "\t\"format\": \"uri\",", "\t\"description\": \"${2:Description of ${1} goes here}\"", "}${0}"],
+        "description": "A property of type string formatted as uri"
     },
     // array types
 
     "Snowboard: Numeric array property": {
         "prefix": ["numeric array"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": \"array\",", "\t\"description\": \"${2:Description goes here}\",", "\t\"items\": {", "\t\t\"type\": \"number\"", "\t}", "}${0}"],
+        "body": ["\"${1:property_name}\": {", "\t\"type\": \"array\",", "\t\"description\": \"${2:Description of ${1} goes here}\",", "\t\"items\": {", "\t\t\"type\": \"number\",", "\t\t\"description\": \"${3:Description goes here}\"", "\t}", "}${0}"],
         "description": "A numeric array"
     },
     "Snowboard: String array property": {
         "prefix": ["string array"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": \"array\",", "\t\"description\": \"${2:Description goes here}\",", "\t\"items\": {", "\t\t\"type\": \"string\"", "\t}", "}${0}"],
+        "body": ["\"${1:property_name}\": {", "\t\"type\": \"array\",", "\t\"description\": \"${2:Description of ${1} goes here}\",", "\t\"items\": {", "\t\t\"type\": \"string\",", "\t\t\"description\": \"${3:Description goes here}\"", "\t}", "}${0}"],
         "description": "A string array"
     },
     "Snowboard: Integer array property": {
         "prefix": ["integer array"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": \"array\",", "\t\"description\": \"${2:Description goes here}\",", "\t\"items\": {", "\t\t\"type\": \"integer\"", "\t}", "}${0}"],
+        "body": ["\"${1:property_name}\": {", "\t\"type\": \"array\",", "\t\"description\": \"${2:Description of ${1} goes here}\",", "\t\"items\": {", "\t\t\"type\": \"integer\",", "\t\t\"description\": \"${3:Description goes here}\"", "\t}", "}${0}"],
         "description": "An array of integers"
     },
     "Snowboard: Boolean array property": {
         "prefix": ["boolean array"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": \"array\",", "\t\"description\": \"${2:Description goes here}\",", "\t\"items\": {", "\t\t\"type\": \"boolean\"", "\t}", "}${0}"],
+        "body": ["\"${1:property_name}\": {", "\t\"type\": \"array\",", "\t\"description\": \"${2:Description of ${1} goes here}\",", "\t\"items\": {", "\t\t\"type\": \"boolean\",", "\t\t\"description\": \"${3:Description goes here}\"", "\t}", "}${0}"],
         "description": "An array of booleans"
     },
     "Snowboard: Array of arrays property": {
         "prefix": ["array of arrays"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": \"array\",", "\t\"description\": \"${2:Description goes here}\",", "\t\"items\": {", "\t\t\"type\": \"array\"", "\t}", "}${0}"],
+        "body": ["\"${1:property_name}\": {", "\t\"type\": \"array\",", "\t\"description\": \"${2:Description of ${1} goes here}\",", "\t\"items\": {", "\t\t\"type\": \"array\",", "\t\t\"description\": \"${3:Description goes here}\",", "\t\t\"items\": {", "\t\t\t\"type\": \"${4|number,integer,string,boolean,array,object|}\",", "\t\t\t\"description\": \"${5:Description goes here}\"", "\t\t}", "\t}", "}${0}"],
         "description": "An array of arrays"
     },
     "Snowboard: Object array property": {
         "prefix": ["object array"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": \"array\",", "\t\"items\": {", "\t\t\"type\": \"object\",", "\t\t\"description\": \"${2:Description goes here}\",", "\t\t\"properties\": {", "\t\t\t${3}", "\t\t},", "\t\t\"additionalProperties\": ${4:false}", "\t}", "}${0}"],
+        "body": ["\"${1:property_name}\": {", "\t\"type\": \"array\",", "\t\"items\": {", "\t\t\"type\": \"object\",", "\t\t\"description\": \"${2:Description of ${1} goes here}\",", "\t\t\"properties\": {", "\t\t\t${0}", "\t\t},", "\t\t\"additionalProperties\": ${4|false,true|},", "\t\t\"required\": []", "\t}", "}"],
         "description": "An array of objects"
     },
 
 
     // nullable types, add a 'n' afterwards for shortcuts?
-	"Snowboard: Number property (nullable)": {
+    "Snowboard: Number property (nullable)": {
         "prefix": ["number", "nullable number"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": [\"number\", \"null\"],", "\t\"description\": \"${2:Description goes here}\"", "}${0}"],
+        "body": ["\"${1:property_name}\": {", "\t\"type\": [\"number\", \"null\"],", "\t\"description\": \"${2:Description of ${1} goes here}\"", "}${0}"],
         "description": "A number property which is nullable."
     },
     "Snowboard: String property (nullable)": {
         "prefix": ["string", "nullable string"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": [\"string\", \"null\"],", "\t\"description\": \"${2:Description goes here}\"", "}${0}"],
+        "body": ["\"${1:property_name}\": {", "\t\"type\": [\"string\", \"null\"],", "\t\"description\": \"${2:Description of ${1} goes here}\"", "}${0}"],
         "description": "A string property which is nullable."
     },
     "Snowboard: Integer property (nullable)": {
         "prefix": ["integer", "nullable integer"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": [\"integer\", \"null\"],", "\t\"description\": \"${2:Description goes here}\"", "}${0}"],
+        "body": ["\"${1:property_name}\": {", "\t\"type\": [\"integer\", \"null\"],", "\t\"description\": \"${2:Description of ${1} goes here}\"", "}${0}"],
         "description": "An integer property which is nullable"
     },
     "Snowboard: Boolean property (nullable)": {
         "prefix": ["boolean", "nullable boolean"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": [\"boolean\", \"null\"],", "\t\"description\": \"${2:Description goes here}\"", "}${0}"],
+        "body": ["\"${1:property_name}\": {", "\t\"type\": [\"boolean\", \"null\"],", "\t\"description\": \"${2:Description of ${1} goes here}\"", "}${0}"],
         "description": "A boolean property which is nullable"
     },
     "Snowboard: Array property (nullable)": {
         "prefix": ["array", "nullable array"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": [\"array\", \"null\"],", "\t\"description\": \"${2:Description goes here}\",", "\t\"items\": {", "\t\t\"type\": \"${3:type}\"", "\t}", "}${0}"],
+        "body": ["\"${1:property_name}\": {", "\t\"type\": [\"array\", \"null\"],", "\t\"description\": \"${2:Description of ${1} goes here}\",", "\t\"items\": {", "\t\t\"type\": \"${3|number,integer,string,boolean,array,object|}\",", "\t\t\"description\": \"${4:Description goes here}\"", "\t}", "}${0}"],
         "description": "An (untyped) nullable array"
     },
     "Snowboard: Object property (nullable)": {
         "prefix": ["object", "nullable object"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": [\"object\", \"null\"],", "\t\"description\": \"${2:Description goes here}\",", "\t\"properties\": {", "\t\t${3}", "\t}", "}${0}"],
+        "body": ["\"${1:property_name}\": {", "\t\"type\": [\"object\", \"null\"],", "\t\"description\": \"${2:Description of ${1} goes here}\",", "\t\"properties\": {", "\t\t${0}", "\t},", "\t\"additionalProperties\": ${3|false,true|},", "\t\"required\": []", "}"],
         "description": "An nullable object"
     },
     "Snowboard: Datetime / timestamp property (nullable)": {
         "prefix": ["date-time", "nullable date-time"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": [\"string\", \"null\"],", "\t\"format\": \"date-time\",", "\t\"description\": \"${2:Description goes here}\"", "}${0}"],
+        "body": ["\"${1:property_name}\": {", "\t\"type\": [\"string\", \"null\"],", "\t\"format\": \"date-time\",", "\t\"description\": \"${2:Description of ${1} goes here}\"", "}${0}"],
         "description": "A datetime (string) property which is nullable"
     },
     "Snowboard: URI property (nullable)": {
         "prefix": ["uri", "nullable uri"],
-        "body": ["\"${1:property_name}\": {", "\t\"type\": [\"string\", \"null\"],", "\t\"format\": \"uri\",", "\t\"description\": \"${2:Description goes here}\"", "}${0}"],
+        "body": ["\"${1:property_name}\": {", "\t\"type\": [\"string\", \"null\"],", "\t\"format\": \"uri\",", "\t\"description\": \"${2:Description of ${1} goes here}\"", "}${0}"],
         "description": "A uri property which is nullable"
     }
     // n = number, s = string, i = integer, b = boolean, a = array, o = object
